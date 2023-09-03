@@ -33,7 +33,7 @@ jobs:
         distribution: 'temurin'
     - name: Set environment values
       run: |
-        cd .server/src/main/resources
+        cd ./server/src/main/resources
         touch ./application.yml
       shell: bash
     - name: Build with Gradle
