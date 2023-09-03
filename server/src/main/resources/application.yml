@@ -1,11 +1,11 @@
+externalImagePath: home/ssm-user/seb44_main_026/images/
 spring:
-  h2:
-    console:
-      enabled: true
-      path: /h2
+  #mvc:
+  #  static-path-pattern: /images/**
+  #resources:
+  #  static-locations: file:${externalImagePath}
   jpa:
     defer-datasource-initialization: true
-    database-platform: H2
     hibernate:
       ddl-auto: create-drop
 
@@ -15,6 +15,13 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: classpath:greennare-9e6b24e727ac.json
+        project-id: greennare
+        bucket: greennare-bucket-1
 
   redis:
     cache:
@@ -22,13 +29,21 @@ spring:
       port: 6379
 
   datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://34.64.148.174:3306/greennare?serverTimezone=Asia/Seoul
+    username: api
+    password: api
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   sql:
     init:
       #schema-locations: classpath*:db/h2/schema.sql
-      data-locations: classpath*:db/h2/data.sql
+      #data-locations: classpath*:db/h2/data.sql
+#  application:
+#    name: monitoring
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 logging:
   level:
@@ -37,11 +52,27 @@ logging:
         jdbc:
           core: TRACE
 
-#jwt:
-#  key: ${JWT_SECRET_KEY}
-#  access-token-expiration-minutes: 120
-#  refresh-token-expiration-minutes: 420
+jwt:
+  key: jasdfasfd1312345351354314560984745
+  access-token-expiration-minutes: 120
+  refresh-token-expiration-minutes: 420
 
-#mail:
-#  address:
-#    admin: admin@gmail.com
+mail:
+  address:
+    admin: admin@gmail.com
+
+#management:
+#  endpoint:
+#    metrics:
+#      enabled: true
+#    prometheus:
+#      enabled: true
+
+# endpoints:
+#    web:
+#      exposure:
+#        include: health, info, metrics, prometheus
+
+# metrics:
+#    tags:
+#      application: ${spring.application.name}

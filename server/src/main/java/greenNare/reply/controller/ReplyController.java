@@ -28,7 +28,6 @@ import java.util.List;
 @RequestMapping("/nare")
 @Validated
 @Slf4j
-@CrossOrigin(origins = "*")
 public class ReplyController {
     private final ReplyService replyService;
     private final ReplyMapper mapper;
@@ -40,49 +39,43 @@ public class ReplyController {
 
     // 댓글 조회
     @GetMapping("/reply/{challengeId}")
-    public ResponseEntity getReply(@PathVariable long challengeId,
-                                   @RequestHeader(value = "Authorization", required = false) String token,
-                                   Pageable pageable) {
-        //Sort sort = Sort.by(Sort.Direction.DESC, "memberId");
-        //Pageable pageable = PageRequest.of(page, size, sort);
+    public ResponseEntity getReply(@PathVariable int challengeId,
+                                   Pageable pageablePageSize) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // challengeId를 내림차순으로 정렬하는 Sort 객체 생성
+        Pageable pageable = PageRequest.of(pageablePageSize.getPageNumber(), pageablePageSize.getPageSize(), sort);
 
-        List<ReplyDto.Response> replyList = replyService.getReplys(challengeId, token, pageable );
-        Page<Reply> replyPage = replyService.getReplyPage(challengeId, token, pageable);
+
+        List<ReplyDto.Response> replyList = replyService.getReplys(challengeId, pageable);
+        Page<Reply> replyPage = replyService.getReplyPage(challengeId, pageable);
 
         return new ResponseEntity<>(new MultiResponseDto<>(replyList, replyPage), HttpStatus.OK);
     }
 
     // 댓글 생성
     @PostMapping("/reply/{challengeId}")
-    public ResponseEntity createReply(@PathVariable long challengeId,
+    public ResponseEntity createReply(@PathVariable int challengeId,
                                       @RequestHeader(value = "Authorization", required = false) String token,
                                       @RequestBody ReplyDto.Post replyPostDto) {
-        log.info("#####  createReply controller 도착");
-        log.info("content = {}", replyPostDto.getContent());
         Reply reply = mapper.replyPostDtoToReply(replyPostDto);
-        log.info("#####  createReply mapper");
-        long memberId = 1;
-        ReplyDto.Response response = replyService.createReply(reply, challengeId, memberId);
+        ReplyDto.Response response = replyService.createReply(reply, challengeId, token);
         return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
     // 댓글 수정
     @PatchMapping("/reply/{replyId}")
-    public ResponseEntity updateReply(@PathVariable long replyId,
+    public ResponseEntity updateReply(@PathVariable int replyId,
                                       @RequestHeader(value = "Authorization", required = false) String token,
                                       @RequestBody ReplyDto.Post replyPatchDto) {
         Reply reply =  mapper.replyPostDtoToReply(replyPatchDto);
-        long memberId = 1;
-        ReplyDto.Response response = replyService.updateReply(reply, replyId, memberId);
+        ReplyDto.Response response = replyService.updateReply(reply, replyId, token);
         return ResponseEntity.ok(new SingleResponseDto<>(response));
     }
 
     // 댓글 삭제
     @DeleteMapping("/reply/{replyId}")
-    public ResponseEntity deleteReply(@PathVariable long replyId,
+    public ResponseEntity deleteReply(@PathVariable int replyId,
                                       @RequestHeader(value = "Authorization", required = false) String token){
-        long memberId  = 1;
-        replyService.deleteReply(replyId, memberId);
+        replyService.deleteReply(replyId, token);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

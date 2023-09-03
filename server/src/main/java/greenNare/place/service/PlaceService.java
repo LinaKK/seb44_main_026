@@ -1,13 +1,12 @@
 package greenNare.place.service;
 
-import greenNare.challenge.entity.Challenge;
-import greenNare.config.SecurityConfiguration;
+import greenNare.auth.jwt.JwtTokenizer;
 import greenNare.exception.BusinessLogicException;
 import greenNare.exception.ExceptionCode;
+import greenNare.member.entity.Member;
 import greenNare.place.dto.PlaceDto;
 import greenNare.place.entity.Place;
 import greenNare.place.repository.PlaceRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,43 +17,26 @@ import java.util.Optional;
 
 public class PlaceService {
     private final PlaceRepository placeRepository;
+    private final JwtTokenizer jwtTokenizer;
 
-    public PlaceService(PlaceRepository placeRepository) {
+    public PlaceService(PlaceRepository placeRepository, JwtTokenizer jwtTokenizer) {
         this.placeRepository = placeRepository;
+        this.jwtTokenizer = jwtTokenizer;
     }
 
-    public Place createPlace(Place place) {//, String token) {
+    public Place createPlace(Place place, String token) {
+        int memberId = findMemberIdByToken(token);
         verifyExistsPlace(place.getLat(), place.getLongi());
-
-        /*
-        String memberEmail = jwtTokenizer.getUsername(token)
-        Member member = findByEmail(memberEmail)
-        Long id = member.getId()
-        Long point = member.getPoint()
-        challenge.setMemberId(id);
-         */
-        /*
-        Place place1 = Place.builder()
-                .placeName(place.getPlaceName())
-                .lat(place.getLat())
-                .longi(place.getLongi())
-                //.memberId(1L)
-                .build();
-         */
-        place.setMemberId(1L);
+        place.setMemberId(memberId);
         return placeRepository.save(place);
     }
 
     public List<Place> getPlaces() {
         return placeRepository.findAll();
     }
-    public void deletePlace(long placeId){//, String token) {
-        /*
-        String memberEmail = jwtTokenizer.getUsername(token)
-        Member member = findByEmail(memberEmail)
-        Long id = member.getId()
-         */
-        long memberId = 1L;
+
+    public void deletePlace(int placeId, String token) {
+        int memberId = findMemberIdByToken(token);
         validateWriter(memberId, placeId);
 
         Optional<Place> findPlace = placeRepository.findById(placeId);
@@ -63,14 +45,22 @@ public class PlaceService {
         placeRepository.delete(place);
     }
 
+    public int findMemberIdByToken(String token) {
+        if(token.isBlank()) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
+        }
+        return  jwtTokenizer.getMemberId(token);
+    }
+
     public void verifyExistsPlace(double lat, double longi) {
         boolean exist = placeRepository.findByLatAndLongi(lat, longi).isPresent();
         if (exist) throw new BusinessLogicException(ExceptionCode.PLACE_EXIST);
     }
-    public void validateWriter(long memberId, long placeId) {
+
+    public void validateWriter(int memberId, int placeId) {
         Optional<Place> place = placeRepository.findById(placeId);
         if(memberId != place.get().getMemberId()){
-            throw new BusinessLogicException(ExceptionCode.WRITER_NOT_MATCHED);
+            throw new BusinessLogicException(ExceptionCode.UNMATCHED_WRITER);
         }
     }
 }

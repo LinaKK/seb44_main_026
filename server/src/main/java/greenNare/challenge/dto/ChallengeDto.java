@@ -1,10 +1,7 @@
 package greenNare.challenge.dto;
 
 import greenNare.challenge.entity.Challenge;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -15,6 +12,7 @@ public class ChallengeDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
+    @Setter
     public static class Post {
         @NotBlank
         private String title;
@@ -36,9 +34,10 @@ public class ChallengeDto {
     @AllArgsConstructor
     @Getter
     @Builder
+    @Setter
     public static class Response {
-        private long challengeId;
-        private long memberId;
+        private int challengeId;
+        private int memberId;
         @NotBlank
         private String title;
         @NotBlank
@@ -50,6 +49,7 @@ public class ChallengeDto {
 
         private String name;
         private int point;
+        private int countReply;
 
         public void setName(String name) {
             this.name = name;
@@ -57,11 +57,18 @@ public class ChallengeDto {
         public void setPoint(int point) {
             this.point = point;
         }
+        public void setCountReply(int countReply) {this.countReply = countReply;}
+
         public static Response from(Challenge challenge) {
             return Response.builder()
                     .challengeId(challenge.getChallengeId())
+                    .memberId(challenge.getMember().getMemberId())
                     .title(challenge.getTitle())
-                    .content(challenge.getContent()).build();
+                    .content(challenge.getContent())
+                    .image(challenge.getImage())
+                    .createdAt(challenge.getCreatedAt())
+                    .updatedAt(challenge.getUpdatedAt())
+                    .build();
         }
     }
 
@@ -69,14 +76,14 @@ public class ChallengeDto {
     @Getter
     @Builder
     public static class PageResponse {
-        private long challengeId;
-        private long memberId;
+        private int challengeId;
+        private int memberId;
         private String title;
         private String name;
         private int point;
+        private int countReply;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-
 
         public void setName(String name) {
             this.name = name;
@@ -84,5 +91,17 @@ public class ChallengeDto {
         public void setPoint(int point) {
             this.point = point;
         }
+        public void setCountReply(int countReply) {this.countReply = countReply;}
+
+        public static PageResponse from(Challenge challenge) {
+            return PageResponse.builder()
+                    .challengeId(challenge.getChallengeId())
+                    .memberId(challenge.getMember().getMemberId())
+                    .title(challenge.getTitle())
+                    .createdAt(challenge.getCreatedAt())
+                    .updatedAt(challenge.getUpdatedAt())
+                    .build();
+        }
+
     }
 }

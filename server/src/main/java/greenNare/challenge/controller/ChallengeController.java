@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,6 @@ import java.util.List;
 @RequestMapping("/nare")
 @Validated
 @Slf4j
-@CrossOrigin(origins = "*")
 //@EnableWebMvc
 public class ChallengeController {
     private final static String CHALLENGE_DEFAULT_URL = "/nare";
@@ -47,8 +48,9 @@ public class ChallengeController {
     }
 
     @GetMapping("/challenge") // 챌린지 전체 조회
-    public ResponseEntity getChallenges(final Pageable pageable) {
-        //Page<Object[]> response = challengeService.getAllChallengeWithUsername(pageable);
+    public ResponseEntity getChallenges(final Pageable pageablePageSize) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // challengeId를 내림차순으로 정렬하는 Sort 객체 생성
+        Pageable pageable = PageRequest.of(pageablePageSize.getPageNumber(), pageablePageSize.getPageSize(), sort);
         Page<Challenge> challengePage = challengeService.getChallengesPage(pageable);
         List<ChallengeDto.PageResponse> response = challengeService.getChallenges(pageable);
         log.info("!!!! getChallenges 완료");
@@ -56,45 +58,54 @@ public class ChallengeController {
     }
 
     @GetMapping("/{challengeId}") // 챌린지 상세 조회
-    public ResponseEntity getChallenge(@PathVariable("challengeId") long challengeId) {
+    public ResponseEntity getChallenge(@PathVariable("challengeId") int challengeId) {
         ChallengeDto.Response response = challengeService.getChallenge(challengeId);
         return ResponseEntity.ok(new SingleResponseDto<>(response));
+    }
+
+    @GetMapping("/myChallenge")
+    public ResponseEntity getMyChallenge(@RequestHeader(value = "Authorization") String token,
+                                         Pageable pageable){
+        Page<Challenge> challengePage = challengeService.getMyChallengePage(pageable, token);
+        List<Challenge> challengeList = challengeService.getMyChallenges(challengePage);
+        return new ResponseEntity<>(new MultiResponseDto<>(challengeList, challengePage), HttpStatus.OK);
     }
 
     @PostMapping("/challenge") // 챌린지 생성
     public ResponseEntity postChallenge(@Valid @RequestPart(required = false) ChallengeDto.Post requestBody,
                                         @RequestPart(required = false) MultipartFile image,
                                         @RequestHeader(value = "Authorization", required = false) String token) throws Exception, IOException {
-        Challenge createdChallenge = challengeService.createChallenge(mapper.challengePostDtoToChallenge(requestBody));
-        Challenge saveImg  = challengeService.saveImage(createdChallenge, image);
+        ChallengeDto.Response createdChallenge = challengeService.createChallenge(mapper.challengePostDtoToChallenge(requestBody), token, image);
 
-        ChallengeDto.Response response = mapper.challengeToChallengeResponseDto(saveImg);//, token);
-        //response.setName(challengeService.findWriter(response.getChallengeId()));
-
-        //URI location = UriCreator.createUri(CHALLENGE_DEFAULT_URL+"/challenge/", createdChallenge.getChallengeId());
-        //HttpHeaders headers = new HttpHeaders();
-        //headers.setLocation(location);
-
-        //return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(new SingleResponseDto<>(response));
-
-        return new ResponseEntity<>(new SingleResponseDto<>(saveImg), HttpStatus.CREATED);
+        return new ResponseEntity<>(new SingleResponseDto<>(createdChallenge), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{challengeId}") // 챌린지 수정
-    public ResponseEntity patchChallenge(@PathVariable("challengeId") long challengeId,
+    public ResponseEntity patchChallenge2(@PathVariable("challengeId") int challengeId,
                                          @Valid @RequestPart(required = false) ChallengeDto.Patch requestBody,
                                          @RequestPart(required = false) MultipartFile image,
                                          @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
         Challenge patch = mapper.challengePatchDtoToChallenge(requestBody);
 
-        ChallengeDto.Response response = challengeService.updateChallenge(patch, challengeId, image);
-        //challengeService.saveImage(updateChallenge, image)
+        ChallengeDto.Response response = challengeService.updateChallenge(patch, challengeId, image, token);
+
+        return ResponseEntity.ok(new SingleResponseDto<>(response));
+    }
+
+    @PostMapping("/update/{challengeId}") // 챌린지 수정
+    public ResponseEntity patchChallenge(@PathVariable("challengeId") int challengeId,
+                                         @Valid @RequestPart(required = false) ChallengeDto.Patch requestBody,
+                                         @RequestPart(required = false) MultipartFile image,
+                                         @RequestHeader(value = "Authorization", required = false) String token) throws IOException {
+        Challenge patch = mapper.challengePatchDtoToChallenge(requestBody);
+
+        ChallengeDto.Response response = challengeService.updateChallenge(patch, challengeId, image, token);
 
         return ResponseEntity.ok(new SingleResponseDto<>(response));
     }
 
     @DeleteMapping("/{challengeId}") // 챌린지 삭제
-    public ResponseEntity deleteChallenge(@PathVariable("challengeId") long challengeId,
+    public ResponseEntity deleteChallenge(@PathVariable("challengeId") int challengeId,
                                           @RequestHeader(value = "Authorization", required = false) String token){
         challengeService.deleteChallenge(challengeId, token);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

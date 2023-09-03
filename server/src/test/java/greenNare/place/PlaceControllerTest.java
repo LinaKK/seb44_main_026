@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,7 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-@WebMvcTest(PlaceController.class)
+//@WebMvcTest(PlaceController.class)
+@SpringBootTest
 @AutoConfigureWebMvc
 public class PlaceControllerTest {
     @Autowired
@@ -42,8 +44,9 @@ public class PlaceControllerTest {
     @DisplayName("create place test")
     void createPlaceTest() throws Exception {
         Place mockPlace = new Place(1,1,"place1",1.1,2.1);
+        String mockToken = "token";
         PlaceDto.Post placePostDto = new PlaceDto.Post("place1", 1.1, 2.1);
-        given(placeService.createPlace(placeMapper.placePostDtoToPlace(placePostDto))).willReturn(mockPlace);
+        given(placeService.createPlace(placeMapper.placePostDtoToPlace(placePostDto), mockToken)).willReturn(mockPlace);
 
         Gson gson = new Gson();
         String content =  gson.toJson(placePostDto);
@@ -60,7 +63,7 @@ public class PlaceControllerTest {
                 .andExpect(jsonPath("$.data.longi").value(2.1))
                 .andDo(print());
 
-        verify(placeService).createPlace(placeMapper.placePostDtoToPlace(placePostDto));
+        verify(placeService).createPlace(placeMapper.placePostDtoToPlace(placePostDto), mockToken);
     }
 
     @Test
@@ -89,11 +92,12 @@ public class PlaceControllerTest {
     @Test
     @DisplayName("delete place test")
     void deletePlaceTest() throws Exception {
-        long placeId = 1L;
+        int placeId = 1;
+        String mockToken = "token";
         // String token = "your-token";
 
         // Mock placeService.deletePlace 호출 시 아무 작업도 하지 않도록 설정
-        doNothing().when(placeService).deletePlace(placeId);
+        doNothing().when(placeService).deletePlace(placeId, mockToken);
 
         mockMvc.perform(
                 delete("/nare/map/{placeId}", placeId)
@@ -102,6 +106,6 @@ public class PlaceControllerTest {
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
-        verify(placeService).deletePlace(placeId);
+        verify(placeService).deletePlace(placeId, mockToken);
     }
 }

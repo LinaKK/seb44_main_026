@@ -20,7 +20,6 @@ import java.util.List;
 @RequestMapping("/nare/map")
 @Validated
 @Slf4j
-@CrossOrigin(origins = "*")
 public class PlaceController {
     private final PlaceService placeService;
     private final PlaceMapper mapper;
@@ -34,7 +33,7 @@ public class PlaceController {
     @PostMapping
     public ResponseEntity createPlace(@RequestBody PlaceDto.Post placePostDto,
                                       @RequestHeader(value = "Authorization", required = false) String token){
-        Place createdPlace = placeService.createPlace(mapper.placePostDtoToPlace(placePostDto));
+        Place createdPlace = placeService.createPlace(mapper.placePostDtoToPlace(placePostDto), token);
 
         return new ResponseEntity<>(new SingleResponseDto<>(createdPlace), HttpStatus.CREATED);
     }
@@ -46,9 +45,9 @@ public class PlaceController {
     }
 
     @DeleteMapping("/{placeId}")
-    public ResponseEntity deletePlace(@PathVariable long placeId,
+    public ResponseEntity deletePlace(@PathVariable int placeId,
                                       @RequestHeader(value = "Authorization", required = false) String token) {
-        placeService.deletePlace(placeId);//, token);
+        placeService.deletePlace(placeId, token);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
