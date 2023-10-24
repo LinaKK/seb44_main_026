@@ -98,8 +98,6 @@ public class CartService {
                     List<String> imageLinks = images.stream()
                             .map(image -> image.getImageUri())
                             .collect(Collectors.toList());
-//                    Image image = imageRepository.findImageUriByProductProductId(product.getProductId());
-//                    String imageLink = image.getImageUri();
 
                     GetProductWithImageDto resultDto = new GetProductWithImageDto(
                             product.getProductId(),
@@ -110,8 +108,7 @@ public class CartService {
                             product.getPoint(),
                             product.getStoreLink(),
                             imageLinks,
-                            false
-//                            imageLink
+                            true
                     );
 
                     return resultDto;

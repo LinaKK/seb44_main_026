@@ -15,6 +15,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,49 +47,76 @@ public class ProductService {
 
     }
 
-    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
-        //List<Product> productList = products.getContent();
-        List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
-                .map(product -> {
-                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
-                    List<String> imageLinks = images.stream()
-                            .map(image -> image.getImageUri())
-                            .collect(Collectors.toList());
-//                    Image image = imageRepository.findImageUriByProductProductId(product.getProductId());
-//                    String imageLink = image.getImageUri();
-
-                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
-                            product.getProductId(),
-                            product.getProductName(),
-                            product.getDetail(),
-                            product.getPrice(),
-                            product.getCategory(),
-                            product.getPoint(),
-                            product.getStoreLink(),
-                            imageLinks,
-                            false
-//                            imageLink
-                    );
-
-                    return resultDto;
-                })
-                .collect(Collectors.toList());
-
-        return getProductWithImageDtos;
-
-    }
+//    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
+//        //List<Product> productList = products.getContent();
+//        List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
+//                .map(product -> {
+//                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+//                    List<String> imageLinks = images.stream()
+//                            .map(image -> image.getImageUri())
+//                            .collect(Collectors.toList());
+//
+//                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
+//                            product.getProductId(),
+//                            product.getProductName(),
+//                            product.getDetail(),
+//                            product.getPrice(),
+//                            product.getCategory(),
+//                            product.getPoint(),
+//                            product.getStoreLink(),
+//                            imageLinks,
+//                            false
+//
+//                    );
+//
+//                    return resultDto;
+//                })
+//                .collect(Collectors.toList());
+//
+//        return getProductWithImageDtos;
+//
+//    }
 
 
     public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products, List<Integer> cartProductId) {
         //List<Product> productList = products.getContent();
+
+        if(cartProductId.size() == 0){
+            List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
+                    .map(product -> {
+//                        List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+//                        List<String> imageLinks = images.stream()
+//                                .map(image -> image.getImageUri())
+//                                .collect(Collectors.toList());
+
+                        GetProductWithImageDto resultDto = new GetProductWithImageDto(
+                                product.getProductId(),
+                                product.getProductName(),
+                                product.getDetail(),
+                                product.getPrice(),
+                                product.getCategory(),
+                                product.getPoint(),
+                                product.getStoreLink(),
+//                            imageLinks,
+                                getImageLinks(product),
+                                false
+
+                        );
+
+                        return resultDto;
+                    })
+                    .collect(Collectors.toList());
+
+            return getProductWithImageDtos;
+        }
+
         List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
                 .map(product -> {
-                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
-                    List<String> imageLinks = images.stream()
-                            .map(image -> image.getImageUri())
-                            .collect(Collectors.toList());
-//                    Image image = imageRepository.findImageUriByProductProductId(product.getProductId());
-//                    String imageLink = image.getImageUri();
+//                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+//                    List<String> imageLinks = images.stream()
+//                            .map(image -> image.getImageUri())
+//                            .collect(Collectors.toList());
+
                     //카트에있는 상품번호면 boolean existInMyCart == true
                     log.info("finding cartproducrt");
 
@@ -100,9 +128,10 @@ public class ProductService {
                             product.getCategory(),
                             product.getPoint(),
                             product.getStoreLink(),
-                            imageLinks,
+//                            imageLinks,
+                            getImageLinks(product),
                             existInMyCart(cartProductId, product.getProductId())
-//                            imageLink
+
                     );
 
                     return resultDto;
@@ -122,10 +151,11 @@ public class ProductService {
 
     public GetProductWithImageDto getProductWithImage(int productId) {
         Product productDetails = getProduct(productId); //productRepository.findById(productId);
-        List<Image> images = imageRepository.findImagesUriByProductProductId(productDetails.getProductId());
-        List<String> imageLinks = images.stream()
-                .map(image -> image.getImageUri())
-                .collect(Collectors.toList());
+//        List<Image> images = imageRepository.findImagesUriByProductProductId(productDetails.getProductId());
+//        List<String> imageLinks = images.stream()
+//                .map(image -> image.getImageUri())
+//                .collect(Collectors.toList());
+
 //        String imageLink = imageRepository.findImageUriByProductProductId(productId).getImageUri();
         GetProductWithImageDto resultDto = new GetProductWithImageDto(
                 productDetails.getProductId(),
@@ -135,42 +165,43 @@ public class ProductService {
                 productDetails.getCategory(),
                 productDetails.getPoint(),
                 productDetails.getStoreLink(),
-                imageLinks,
+//                imageLinks,
+                getImageLinks(productDetails),
                 false
 
         );
         return resultDto;
     }
 
-    public GetProductWithImageDto getProductWithImage(int productId, List<Integer> cartProductId) {
-        Product productDetails = getProduct(productId); //productRepository.findById(productId);
-        List<Image> images = imageRepository.findImagesUriByProductProductId(productDetails.getProductId());
-        List<String> imageLinks = images.stream()
-                .map(image -> image.getImageUri())
-                .collect(Collectors.toList());
-//        String imageLink = imageRepository.findImageUriByProductProductId(productId).getImageUri();
-
-        //카트에있는 상품번호면 boolean existInMyCart == true
-        GetProductWithImageDto resultDto = new GetProductWithImageDto(
-                productDetails.getProductId(),
-                productDetails.getProductName(),
-                productDetails.getDetail(),
-                productDetails.getPrice(),
-                productDetails.getCategory(),
-                productDetails.getPoint(),
-                productDetails.getStoreLink(),
-                imageLinks,
-                existInMyCart(cartProductId, productId)
-
-
-        );
-        return resultDto;
-    }
+//    public GetProductWithImageDto getProductWithImage(int productId, List<Integer> cartProductId) {
+//        Product productDetails = getProduct(productId); //productRepository.findById(productId);
+//        List<Image> images = imageRepository.findImagesUriByProductProductId(productDetails.getProductId());
+//        List<String> imageLinks = images.stream()
+//                .map(image -> image.getImageUri())
+//                .collect(Collectors.toList());
+////        String imageLink = imageRepository.findImageUriByProductProductId(productId).getImageUri();
+//
+//
+//        GetProductWithImageDto resultDto = new GetProductWithImageDto(
+//                productDetails.getProductId(),
+//                productDetails.getProductName(),
+//                productDetails.getDetail(),
+//                productDetails.getPrice(),
+//                productDetails.getCategory(),
+//                productDetails.getPoint(),
+//                productDetails.getStoreLink(),
+//                imageLinks,
+//                existInMyCart(cartProductId, productId)
+//
+//
+//        );
+//        return resultDto;
+//    }
 
     public List<Product> findProducts(String productName) {
 
         List<Product> findProducts = productRepository.findByProductName(productName);
-        System.out.println(productName + findProducts);
+        log.info(productName + findProducts);
 
         //String일 경우 조회결과없음 -> int타입으로 price와비교해서 조회확인(ok)
         //List<Product> findProducts = productRepository.findByPrice(productName);
@@ -196,7 +227,15 @@ public class ProductService {
 //                return true;
 //            }
 //        }
-
         return false;
+    }
+
+    public List<String> getImageLinks(Product product){
+        List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+        List<String> imageLinks = images.stream()
+                .map(image -> image.getImageUri())
+                .collect(Collectors.toList());
+
+        return imageLinks;
     }
 }

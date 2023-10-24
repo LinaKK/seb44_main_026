@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -44,14 +45,21 @@ public class ProductController {
         Page<Product> getProducts = productService.getProducts(page, size, category);
 
         if(token == null) {
-            List<GetProductWithImageDto> responseProducts = productService.getProductsWithImage(getProducts);
-            MultiResponseDto response = new MultiResponseDto(responseProducts, getProducts);
+            // ProductService.class_existInMyCart() 매번 호출하지 않아도됨(로그인하지 않아 카트상품 없으므로 매번 호출하는것은 불필요)
+//            List<GetProductWithImageDto> responseProducts = productService.getProductsWithImage(getProducts);
+//            MultiResponseDto response = new MultiResponseDto(responseProducts, getProducts);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+
+            //한가지 service 메서드로 사용가능, 코드 추가 시 로그인하지 않은상태에서 임시 카트상품 저장가능
+            // List<GetProductWithImageDto>에 넣을 객체마다 매번 ProductService.class_existInMyCart() 호출하게되는데 불필요하다고 예상
+            // -> ProductService.class_getProductsWithImage() 에서 빈 리스트를 구분하여 ProductService.class_existInMyCart()를 매번 호출하지 않도록함
+            List<Integer> cartProductId = new ArrayList<>();
+            List<GetProductWithImageDto> responseProductsWithCart = productService.getProductsWithImage(getProducts, cartProductId);
+            MultiResponseDto response = new MultiResponseDto(responseProductsWithCart, getProducts);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-
-
-        //토큰있으면 카트리스트도 같이 전송
+        //토큰있으면 카트상품리스트도 같이 전송
         else{
             List<Integer> cartProductId = cartService.getLikeProductId(jwtTokenizer.getMemberId(token));
             List<GetProductWithImageDto> responseProductsWithCart = productService.getProductsWithImage(getProducts, cartProductId);
