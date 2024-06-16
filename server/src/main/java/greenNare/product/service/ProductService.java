@@ -51,10 +51,10 @@ public class ProductService {
 //        //List<Product> productList = products.getContent();
 //        List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
 //                .map(product -> {
-//                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
-//                    List<String> imageLinks = images.stream()
-//                            .map(image -> image.getImageUri())
-//                            .collect(Collectors.toList());
+////                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+////                    List<String> imageLinks = images.stream()
+////                            .map(image -> image.getImageUri())
+////                            .collect(Collectors.toList());
 //
 //                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
 //                            product.getProductId(),
@@ -64,7 +64,8 @@ public class ProductService {
 //                            product.getCategory(),
 //                            product.getPoint(),
 //                            product.getStoreLink(),
-//                            imageLinks,
+////                            imageLinks,
+//                            getImageLinks(product),
 //                            false
 //
 //                    );
