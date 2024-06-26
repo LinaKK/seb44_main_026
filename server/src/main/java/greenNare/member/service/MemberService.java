@@ -1,6 +1,7 @@
 package greenNare.member.service;
 
 import greenNare.cart.entity.Cart;
+import greenNare.cart.entity.CartItem;
 import greenNare.cart.repository.CartRepository;
 import greenNare.cart.service.CartService;
 import greenNare.config.SecurityConfiguration;
@@ -13,16 +14,21 @@ import greenNare.product.entity.Image;
 import greenNare.product.entity.Product;
 import greenNare.product.repository.ImageRepository;
 import greenNare.product.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageReader;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@Slf4j
 @Service
 public class MemberService {
     private MemberRepository memberRepository;
@@ -32,16 +38,17 @@ public class MemberService {
 //
 //    private ImageRepository imageRepository;
 //
-//    private ProductService productService;
+    private ProductService productService;
 
 
     public MemberService(MemberRepository memberRepository,
-                         SecurityConfiguration securityConfiguration/*,
+                         SecurityConfiguration securityConfiguration,
+                         ProductService productService/*,
                          CartService cartService,
-                         ProductService productService,
                          ImageRepository imageRepository*/) {
         this.memberRepository = memberRepository;
         this.securityConfiguration = securityConfiguration;
+        this.productService = productService;
 //        this.cartService = cartService;
 //        this.productService = productService;
 //        this.imageRepository = imageRepository;
@@ -136,6 +143,31 @@ public class MemberService {
         member.setPoint(changePoint);
         memberRepository.save(member);
     }
+
+    public void addMyCart(int memberId, int productId) {
+        CartItem item = new CartItem(productId);
+        Member member = findMemberById(memberId);
+        member.getCartItemList().add(item);
+    }
+
+    public List<Integer> getCartProductsId(int memberId) {
+        Member member = findMemberById(memberId);
+        log.info("member :" + member);
+
+        log.info("cartProductSIds :" + member.getCartItemList());
+        List<Integer> cartProductsId = member.getCartItemList().stream()
+                .map(product -> {
+                    return product.getProductId();
+                }).collect(Collectors.toList());
+        log.info("cartProductSIds :"+ cartProductsId);
+        return cartProductsId;
+    }
+
+    public List<GetProductWithImageDto> getCartProducts(List<Integer> productIds, Pageable pageRequest) {
+        return productService.getProducts(productIds, pageRequest);
+    }
+
+
 
 //    public Page<Product> getLikeProduts(int memberId, PageRequest pageable) {
 //        Page<Product> likeProducts = cartService.findMyLikeProducts(memberId,pageable);//cartService.findMyLikeProducts(memberId, pageable);

@@ -1,6 +1,7 @@
 package greenNare.member.repository;
 
 import greenNare.cart.entity.Cart;
+import greenNare.cart.entity.CartItem;
 import greenNare.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +14,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Member findBymemberId(int memberId);
     Optional<Member> findByEmail(String email);
-
     Page<Cart> findCartByMemberId(int memberId, PageRequest pageable);
 }
 

@@ -1,6 +1,7 @@
 package greenNare.member.entity;
 
 import greenNare.cart.entity.Cart;
+import greenNare.cart.entity.CartItem;
 import greenNare.challenge.entity.Challenge;
 import greenNare.reply.entity.Reply;
 import lombok.*;
@@ -40,6 +41,9 @@ public class Member {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "CART_PRODUCT")
+    private List<CartItem> cartItemList = new ArrayList<>();
 
     public Member(String email, String name, String password, int point){
         this.email = email;

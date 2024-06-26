@@ -31,10 +31,10 @@ public class ProductController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/")
-    public void response(){
-        System.out.println("h");
-    }
+//    @GetMapping("/")
+//    public void response(){
+//        System.out.println("h");
+//    }
 
     @GetMapping
     public ResponseEntity getProducts(@RequestParam("page") int page,

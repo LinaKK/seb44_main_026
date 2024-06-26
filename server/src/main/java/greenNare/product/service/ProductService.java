@@ -11,9 +11,12 @@ import greenNare.product.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,10 +54,10 @@ public class ProductService {
 //        //List<Product> productList = products.getContent();
 //        List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
 //                .map(product -> {
-//                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
-//                    List<String> imageLinks = images.stream()
-//                            .map(image -> image.getImageUri())
-//                            .collect(Collectors.toList());
+////                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+////                    List<String> imageLinks = images.stream()
+////                            .map(image -> image.getImageUri())
+////                            .collect(Collectors.toList());
 //
 //                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
 //                            product.getProductId(),
@@ -64,7 +67,8 @@ public class ProductService {
 //                            product.getCategory(),
 //                            product.getPoint(),
 //                            product.getStoreLink(),
-//                            imageLinks,
+////                            imageLinks,
+//                            getImageLinks(product),
 //                            false
 //
 //                    );
@@ -237,5 +241,31 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         return imageLinks;
+    }
+
+    public List<GetProductWithImageDto> getProducts(List<Integer> productIds, Pageable pageRequest) {
+        Page<Product> findProducts = productRepository.findByProductIds(productIds, pageRequest);
+        List<GetProductWithImageDto> products = findProducts.getContent().stream()
+                .map(product -> {
+                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
+                            product.getProductId(),
+                            product.getProductName(),
+                            product.getDetail(),
+                            product.getPrice(),
+                            product.getCategory(),
+                            product.getPoint(),
+                            product.getStoreLink(),
+//                            imageLinks,
+                            getImageLinks(product),
+                            false
+
+                    );
+
+                    return resultDto;
+
+                })
+                .collect(Collectors.toList());
+
+        return products;
     }
 }

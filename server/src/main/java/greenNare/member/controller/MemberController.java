@@ -4,17 +4,21 @@ import greenNare.auth.jwt.JwtTokenizer;
 
 
 import greenNare.Response.SingleResponseDto;
+import greenNare.cart.service.CartService;
 import greenNare.member.entity.Member;
 import greenNare.member.mapper.MemberMapper;
 import greenNare.member.dto.MemberDto;
 import greenNare.member.service.MemberService;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -75,6 +79,29 @@ import java.util.Optional;
         }
         return new ResponseEntity<>(new SingleResponseDto<>(mapper.memberToMemberResponse(member)), HttpStatus.OK);
 
+    }
+
+    @Transactional
+    @PostMapping("addCart")
+    public ResponseEntity addCartItem(@RequestHeader(value = "Authorization", required = false) String token,
+                                        @RequestBody MemberDto.PostCart postCart) {
+
+        memberService.addMyCart(jwtTokenizer.getMemberId(token), postCart.getProductId());
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Transactional
+    @GetMapping("getCart")
+    public ResponseEntity getMyCart(@RequestHeader(value = "Authorization", required = false) String token,
+                                    @RequestParam int page,
+                                    @RequestParam int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        List<Integer> productIds = memberService.getCartProductsId(jwtTokenizer.getMemberId(token));
+        SingleResponseDto response = new SingleResponseDto(memberService.getCartProducts(productIds, pageRequest));
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
 }
