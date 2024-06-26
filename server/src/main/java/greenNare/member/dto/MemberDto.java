@@ -26,6 +26,14 @@ public class MemberDto {
         @NotBlank(message = "빈칸을 채워주세요.")
         private String name;
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class PostCart {
+        private int productId;
+
+    }
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor

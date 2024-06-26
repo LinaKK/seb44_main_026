@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,10 +26,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 //    @Query(value = "SELECT * FROM PRODUCT WHERE PRICE = :productName", nativeQuery = true)
 //    List<Product> findByPrice(int productName);
 
+    @Query("SELECT p FROM Product p WHERE productId IN :productIds")
+    Page<Product> findByProductIds(@Param("productIds") List<Integer> productIds, Pageable pageable);
 
     //(내부쿼리확인필요)
     List<Product> findByProductNameContaining(String productName);
-
-
 
 }
