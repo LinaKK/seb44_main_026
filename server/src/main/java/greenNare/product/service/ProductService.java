@@ -82,37 +82,39 @@ public class ProductService {
 //    }
 
 
-    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products, List<Integer> cartProductId) {
+    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
         //List<Product> productList = products.getContent();
 
-        if(cartProductId.size() == 0){
-            List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
-                    .map(product -> {
+        List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
+                .map(product -> {
 //                        List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
 //                        List<String> imageLinks = images.stream()
 //                                .map(image -> image.getImageUri())
 //                                .collect(Collectors.toList());
 
-                        GetProductWithImageDto resultDto = new GetProductWithImageDto(
-                                product.getProductId(),
-                                product.getProductName(),
-                                product.getDetail(),
-                                product.getPrice(),
-                                product.getCategory(),
-                                product.getPoint(),
-                                product.getStoreLink(),
-//                            imageLinks,
-                                getImageLinks(product),
-                                false
+                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
+                            product.getProductId(),
+                            product.getProductName(),
+                            product.getDetail(),
+                            product.getPrice(),
+                            product.getCategory(),
+                            product.getPoint(),
+                            product.getStoreLink(),
+//                          imageLinks,
+                            getImageLinks(product),
+                            false
 
-                        );
+                    );
 
-                        return resultDto;
-                    })
-                    .collect(Collectors.toList());
+                    return resultDto;
+                })
+                .collect(Collectors.toList());
 
-            return getProductWithImageDtos;
-        }
+        return getProductWithImageDtos;
+
+    }
+
+    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products, List<Integer> cartProductId){
 
         List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
                 .map(product -> {
@@ -143,7 +145,6 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         return getProductWithImageDtos;
-
     }
 
 
