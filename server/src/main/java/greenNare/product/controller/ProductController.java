@@ -5,6 +5,7 @@ import greenNare.Response.MultiResponseDto;
 import greenNare.Response.SingleResponseDto;
 import greenNare.auth.jwt.JwtTokenizer;
 import greenNare.cart.service.CartService;
+import greenNare.member.service.MemberService;
 import greenNare.product.dto.GetProductWithImageDto;
 import greenNare.product.entity.Product;
 import greenNare.product.service.ProductService;
@@ -23,12 +24,12 @@ public class ProductController {
     private ProductService productService;
 
     private JwtTokenizer jwtTokenizer;
-    private CartService cartService;
+    private MemberService memberService;
 
-    public ProductController(ProductService productService, JwtTokenizer jwtTokenizer, CartService cartService) {
+    public ProductController(ProductService productService, JwtTokenizer jwtTokenizer, MemberService memberService) {
         this.productService = productService;
         this.jwtTokenizer = jwtTokenizer;
-        this.cartService = cartService;
+        this.memberService = memberService;
     }
 
 //    @GetMapping("/")
@@ -61,7 +62,7 @@ public class ProductController {
 
         //토큰있으면 카트상품리스트도 같이 전송
         else{
-            List<Integer> cartProductId = cartService.getLikeProductId(jwtTokenizer.getMemberId(token));
+            List<Integer> cartProductId = memberService.getCartProductsId(jwtTokenizer.getMemberId(token));
             List<GetProductWithImageDto> responseProductsWithCart = productService.getProductsWithImage(getProducts, cartProductId);
             MultiResponseDto response = new MultiResponseDto(responseProductsWithCart, getProducts);
             return new ResponseEntity<>(response, HttpStatus.OK);
