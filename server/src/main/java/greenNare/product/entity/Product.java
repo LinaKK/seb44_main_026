@@ -4,6 +4,7 @@ import greenNare.audit.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 import javax.persistence.*;
@@ -14,13 +15,14 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Entity
 public class Product extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @Column(nullable = false, unique = true, name = "PRODUCT_NAME")
+    @Column(nullable = false, name = "PRODUCT_NAME")
     private String productName;
     @Column(nullable = false)
     private String detail;
