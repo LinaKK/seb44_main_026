@@ -3,6 +3,7 @@ package greenNare.product;
 import greenNare.member.entity.Member;
 import greenNare.member.repository.MemberRepository;
 
+import greenNare.product.data.ExcelDataLoader;
 import greenNare.product.entity.Image;
 import greenNare.product.entity.Product;
 import greenNare.product.entity.Review;
@@ -10,6 +11,7 @@ import greenNare.product.repository.ImageRepository;
 import greenNare.product.repository.ProductRepository;
 import greenNare.product.repository.ReviewRepository;
 import greenNare.product.service.ProductService;
+import org.aspectj.apache.bcel.classfile.ExceptionTable;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,18 @@ import java.util.Optional;
 
 @Component
 public class DataLoder implements CommandLineRunner {
+    ExcelDataLoader excelDataLoader;
+
+    public DataLoder(ExcelDataLoader excelDataLoader){
+        this.excelDataLoader = excelDataLoader;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        excelDataLoader.loadExcelData("C:/Users/kimri/Desktop/greennare_product_data.xlsx");
+    }
+
+    /*
     private final ProductService productService;
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
@@ -130,5 +144,7 @@ public class DataLoder implements CommandLineRunner {
 //        }
 
     }
+
+     */
 
 }
