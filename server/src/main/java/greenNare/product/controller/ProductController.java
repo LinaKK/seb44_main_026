@@ -22,7 +22,6 @@ import java.util.List;
 @RequestMapping("/green")
 public class ProductController {
     private ProductService productService;
-
     private JwtTokenizer jwtTokenizer;
     private MemberService memberService;
 
@@ -32,11 +31,8 @@ public class ProductController {
         this.memberService = memberService;
     }
 
-//    @GetMapping("/")
-//    public void response(){
-//        System.out.println("h");
-//    }
 
+    //카테고리별 상품 조회
     @GetMapping
     public ResponseEntity getProducts(@RequestParam("page") int page,
                                       @RequestParam("size") int size,
@@ -68,10 +64,10 @@ public class ProductController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-//        MultiResponseDto response = new MultiResponseDto(responseProducts, getProducts);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    //상품 상세정보 조회
     @GetMapping("/{productId}")
     public ResponseEntity getProduct(@PathVariable("productId") int productId) {
         GetProductWithImageDto productDetails = productService.getProductWithImage(productId);
@@ -81,6 +77,8 @@ public class ProductController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+
+    //상품 검색
     @GetMapping("/search")
     public ResponseEntity findProduct(@RequestParam("productName") String productName,
                                       @RequestParam("page") int page,
