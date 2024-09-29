@@ -86,7 +86,7 @@ public class ProductService {
 
 
     //DB에서 상품, 상품별 이미지 조회하여 리스트로 반환(사용자 cart상품 리스트 매개변수로 받지 않음)
-    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
+    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products, boolean existCart) {
         //List<Product> productList = products.getContent();
 
         List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
@@ -106,7 +106,7 @@ public class ProductService {
                             product.getStoreLink(),
 //                          imageLinks,
                             getImageLinks(product),
-                            false
+                            existCart
 
                     );
 
