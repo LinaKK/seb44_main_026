@@ -47,6 +47,12 @@ public class ProductService {
         }
     }
 
+    public Page<Product> getProducts(Pageable pageRequest, List<Integer> productIds) {
+        Page<Product> products = productRepository.findByProductIds(productIds, pageRequest);
+
+        return  products;
+    }
+
 //    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
 //        //List<Product> productList = products.getContent();
 //        List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
@@ -256,30 +262,31 @@ public class ProductService {
     }
 
 
-    //
-    public List<GetProductWithImageDto> getProducts(List<Integer> productIds, Pageable pageRequest) {
-        Page<Product> findProducts = productRepository.findByProductIds(productIds, pageRequest);
-        List<GetProductWithImageDto> products = findProducts.getContent().stream()
-                .map(product -> {
-                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
-                            product.getProductId(),
-                            product.getProductName(),
-                            product.getDetail(),
-                            product.getPrice(),
-                            product.getCategory(),
-                            product.getPoint(),
-                            product.getStoreLink(),
-//                            imageLinks,
-                            getImageLinks(product),
-                            false
-
-                    );
-
-                    return resultDto;
-
-                })
-                .collect(Collectors.toList());
-
-        return products;
-    }
+    //MebmerService에서 사용자 cart상품 조회시 getCartProducts에서 사용했으나
+    // getProductsWithImage(Page<Product> products, List<Integer> cartProductId)로 사용변경
+//    public List<GetProductWithImageDto> getProducts(List<Integer> productIds, Pageable pageRequest) {
+//        Page<Product> findProducts = productRepository.findByProductIds(productIds, pageRequest);
+//        List<GetProductWithImageDto> products = findProducts.getContent().stream()
+//                .map(product -> {
+//                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
+//                            product.getProductId(),
+//                            product.getProductName(),
+//                            product.getDetail(),
+//                            product.getPrice(),
+//                            product.getCategory(),
+//                            product.getPoint(),
+//                            product.getStoreLink(),
+////                            imageLinks,
+//                            getImageLinks(product),
+//                            false
+//
+//                    );
+//
+//                    return resultDto;
+//
+//                })
+//                .collect(Collectors.toList());
+//
+//        return products;
+//    }
 }
