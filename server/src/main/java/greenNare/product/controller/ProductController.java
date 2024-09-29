@@ -43,7 +43,7 @@ public class ProductController {
 
         if(token == null) {
             // ProductService.class_existInMyCart() 매번 호출하지 않아도됨(로그인하지 않아 카트상품 없으므로 매번 호출하는것은 불필요)
-            List<GetProductWithImageDto> responseProducts = productService.getProductsWithImage(getProducts);
+            List<GetProductWithImageDto> responseProducts = productService.getProductsWithImage(getProducts, false);
             MultiResponseDto response = new MultiResponseDto(responseProducts, getProducts);
             return new ResponseEntity<>(response, HttpStatus.OK);
 
