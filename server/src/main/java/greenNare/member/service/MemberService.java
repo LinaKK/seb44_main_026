@@ -164,7 +164,11 @@ public class MemberService {
     }
 
     public List<GetProductWithImageDto> getCartProducts(List<Integer> productIds, Pageable pageRequest) {
-        return productService.getProducts(productIds, pageRequest);
+        Page<Product> products = productService.getProducts(pageRequest, productIds);
+
+        return productService.getProductsWithImage(products, productIds);
+
+//        return productService.getProducts(productIds, pageRequest);
     }
 
 

@@ -28,15 +28,14 @@ public class ProductService {
     private ImageRepository imageRepository;
 
 
-
     public ProductService (ProductRepository productRepository,
                            ImageRepository imageRepository) {
         this.productRepository = productRepository;
         this.imageRepository = imageRepository;
     }
 
+    //DB에서 카테고리별 상품 조회
     public Page<Product> getProducts(int page, int size, String category) {
-        //PageRequest pageRequest = PageRequest.of(1, 2);
         PageRequest pageRequest = PageRequest.of(page, size);
         if(category.equals("all")) {
             Page<Product> products = productRepository.findAll(pageRequest);
@@ -46,8 +45,12 @@ public class ProductService {
             Page<Product> products = productRepository.findByCategory(pageRequest, category);
             return products;
         }
+    }
 
+    public Page<Product> getProducts(Pageable pageRequest, List<Integer> productIds) {
+        Page<Product> products = productRepository.findByProductIds(productIds, pageRequest);
 
+        return  products;
     }
 
 //    public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
@@ -82,6 +85,7 @@ public class ProductService {
 //    }
 
 
+    //DB에서 상품, 상품별 이미지 조회하여 리스트로 반환(사용자 cart상품 리스트 매개변수로 받지 않음)
     public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products) {
         //List<Product> productList = products.getContent();
 
@@ -114,6 +118,8 @@ public class ProductService {
 
     }
 
+
+    //DB에서 상품, 상품별 이미지 조회하여 리스트로 반환(사용자 cart상품 리스트 매개변수로 받음)
     public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products, List<Integer> cartProductId){
 
         List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
@@ -148,12 +154,15 @@ public class ProductService {
     }
 
 
+    //DB에서 특정상품 상세정보 조회하여 반환
     public Product getProduct(int productId) {
         Product productDetails = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.PRODUCT_NOT_FOUND));
         return productDetails;
     }
 
+
+    //DB에서 특정상품과 이미지 조회하여 반환
     public GetProductWithImageDto getProductWithImage(int productId) {
         Product productDetails = getProduct(productId); //productRepository.findById(productId);
 //        List<Image> images = imageRepository.findImagesUriByProductProductId(productDetails.getProductId());
@@ -178,6 +187,8 @@ public class ProductService {
         return resultDto;
     }
 
+
+    //DB에서 특정상품과 이미지 조회하여 반환(사용자 cart에 담긴 상품인지 여부도 함께 반환)
 //    public GetProductWithImageDto getProductWithImage(int productId, List<Integer> cartProductId) {
 //        Product productDetails = getProduct(productId); //productRepository.findById(productId);
 //        List<Image> images = imageRepository.findImagesUriByProductProductId(productDetails.getProductId());
@@ -203,6 +214,8 @@ public class ProductService {
 //        return resultDto;
 //    }
 
+
+    //DB에서 상품 이름으로 검색하여 결과 반환
     public List<Product> findProducts(String productName) {
 
         List<Product> findProducts = productRepository.findByProductName(productName);
@@ -214,6 +227,8 @@ public class ProductService {
         return findProducts;
     }
 
+
+    //상품이 사용자의 cart에 담긴 상품인지 여부 반환
     public boolean existInMyCart(List<Integer> cartProductsId, int productId) {
         log.info(cartProductsId.toString() + " " + productId);
 
@@ -235,6 +250,8 @@ public class ProductService {
         return false;
     }
 
+
+    //DB에서 입력받는 상품에 해당하는 이미지링크 조회하여 반환
     public List<String> getImageLinks(Product product){
         List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
         List<String> imageLinks = images.stream()
@@ -244,29 +261,32 @@ public class ProductService {
         return imageLinks;
     }
 
-    public List<GetProductWithImageDto> getProducts(List<Integer> productIds, Pageable pageRequest) {
-        Page<Product> findProducts = productRepository.findByProductIds(productIds, pageRequest);
-        List<GetProductWithImageDto> products = findProducts.getContent().stream()
-                .map(product -> {
-                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
-                            product.getProductId(),
-                            product.getProductName(),
-                            product.getDetail(),
-                            product.getPrice(),
-                            product.getCategory(),
-                            product.getPoint(),
-                            product.getStoreLink(),
-//                            imageLinks,
-                            getImageLinks(product),
-                            false
 
-                    );
-
-                    return resultDto;
-
-                })
-                .collect(Collectors.toList());
-
-        return products;
-    }
+    //MebmerService에서 사용자 cart상품 조회시 getCartProducts에서 사용했으나
+    // getProductsWithImage(Page<Product> products, List<Integer> cartProductId)로 사용변경
+//    public List<GetProductWithImageDto> getProducts(List<Integer> productIds, Pageable pageRequest) {
+//        Page<Product> findProducts = productRepository.findByProductIds(productIds, pageRequest);
+//        List<GetProductWithImageDto> products = findProducts.getContent().stream()
+//                .map(product -> {
+//                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
+//                            product.getProductId(),
+//                            product.getProductName(),
+//                            product.getDetail(),
+//                            product.getPrice(),
+//                            product.getCategory(),
+//                            product.getPoint(),
+//                            product.getStoreLink(),
+////                            imageLinks,
+//                            getImageLinks(product),
+//                            false
+//
+//                    );
+//
+//                    return resultDto;
+//
+//                })
+//                .collect(Collectors.toList());
+//
+//        return products;
+//    }
 }

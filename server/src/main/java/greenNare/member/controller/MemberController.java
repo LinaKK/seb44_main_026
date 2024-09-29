@@ -11,6 +11,7 @@ import greenNare.member.dto.MemberDto;
 import greenNare.member.service.MemberService;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,32 +98,12 @@ import java.util.Optional;
                                     @RequestParam int page,
                                     @RequestParam int size) {
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        Pageable pageRequest = PageRequest.of(page, size);
 
         List<Integer> productIds = memberService.getCartProductsId(jwtTokenizer.getMemberId(token));
         SingleResponseDto response = new SingleResponseDto(memberService.getCartProducts(productIds, pageRequest));
         return new ResponseEntity(response, HttpStatus.OK);
     }
-
 }
-//    @GetMapping("/like")
-//    public ResponseEntity getLikeProduct(@RequestHeader(value = "Authorization", required = false) String token,
-//                                         int page, int size) {
-//        PageRequest pageable = PageRequest.of(page, size);
-//        Page<Product> getLikeProducts = memberService.getLikeProduts(jwtTokenizer.getMemberId(token), pageable);
-//
-//
-//        List<GetProductWithImageDto> getLikeProductsWithImage = memberService.getLikeProductsWithImage(getLikeProducts);
-//        MultiResponseDto response = new MultiResponseDto(getLikeProductsWithImage, getLikeProducts);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/like")
-//    public ResponseEntity getLikeProduct(@RequestHeader(value = "Authorization", required = false) String token) {
-//
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//}
+
 
