@@ -1,6 +1,8 @@
 package greenNare.product.data;
 
+import greenNare.product.entity.Image;
 import greenNare.product.entity.Product;
+import greenNare.product.repository.ImageRepository;
 import greenNare.product.repository.ProductRepository;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -10,15 +12,18 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.Column;
 import javax.transaction.Transactional;
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 @Service
 public class ExcelDataLoader {
     ProductRepository productRepository;
+    ImageRepository imageRepository;
 
-    public ExcelDataLoader(ProductRepository productRepository){
+    public ExcelDataLoader(ProductRepository productRepository, ImageRepository imageRepository){
         this.productRepository = productRepository;
+        this.imageRepository = imageRepository;
     }
 
     @Transactional
@@ -51,6 +56,13 @@ public class ExcelDataLoader {
 
             productRepository.save(product);
 
+            String imageUri = row.getCell(1).getStringCellValue();
+
+            Image image = new Image();
+            image.setImageUri(imageUri);
+            image.setProduct(product);
+
+            imageRepository.save(image);
 
         }
 
