@@ -8,6 +8,7 @@ import lombok.Setter;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +18,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-public class Product extends Auditable {
+public class Product extends Auditable implements Serializable {
+    private static final long serialVeresionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
