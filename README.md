@@ -8,7 +8,6 @@
 ## 🧑‍🤝‍🧑 Team members
 | 김수성<br>(FE Leader) | 백승효<br>(FE) | 김영윤<br>(FE) | 백도담<br>(BE Leader) | 최서우<br>(BE) | 김리나<br>(BE) |
 |:--------:| :--------: | :--------: | :--------: | :--------: |  :--------: |
-| <img src="img/green.png" alt="김수성" width="80" height="80">| <img src="img/green.png" alt="백승효" width="80" height="80"> |<img src="img/green.png" alt="김영윤" width="80" height="80"> | <img src="img/green.png" alt="백도담" width="80" height="80"> | <img src="img/green.png" alt="최서우" width="80" height="80"> |<img src="img/green.png" alt="김리나" width="80" height="80"> |
 |[@KimSuSung0326](https://github.com/KimSuSung0326) | [@hyo-4](https://github.com/hyo-4) | [@youngyun213](https://github.com/youngyun213) |  [@BAEKDODAM](https://github.com/BAEKDODAM)  |[@wooseoboy](https://github.com/wooseoboy)  | [@LinaKK](https://github.com/LinaKK) |
 
 
@@ -74,12 +73,14 @@
 | <img alt="github logo" src="https://techstack-generator.vercel.app/github-icon.svg" width="65" height="65"> | <img alt="Discord logo" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/62595384e89d1d54d704ece7_3437c10597c1526c3dbd98c737c2bcae.svg" height="65" width="65"> | <img alt="Notion logo" src="https://www.notion.so/cdn-cgi/image/format=auto,width=640,quality=100/front-static/shared/icons/notion-app-icon-3d.png" height="65" width="65"> |
 
 </br>
+</br>
 
+#### 현재 데이터 손실로 아래 링크들이 동작하지 않습니다. (복구중)
 ## 🔖 Project Docs
+
 ### 📍사용자 요구사항 정의서
 ### 📍화면 정의서
 ### 📍개발자 테스트 체크리스트
 ### 📍ERD
 ### 📍API 명세서
-###  📺 발표 영상
 
