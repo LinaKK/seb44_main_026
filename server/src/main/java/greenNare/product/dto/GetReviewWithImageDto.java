@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetReviewWithImageDto {
+public class GetReviewWithImageDto/* implements Serializable */ {
+//    private static final long serialVeresionUID = 1L;
+
     private int memberId;
     //@Column(name = "REVIEW_ID")
     private int reviewId;

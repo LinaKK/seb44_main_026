@@ -100,8 +100,8 @@ import java.util.Optional;
 
         Pageable pageRequest = PageRequest.of(page, size);
 
-        List<Integer> productIds = memberService.getCartProductsId(jwtTokenizer.getMemberId(token));
-        SingleResponseDto response = new SingleResponseDto(memberService.getCartProducts(productIds, pageRequest));
+        //List<Integer> productIds = memberService.getCartProductsId(jwtTokenizer.getMemberId(token));
+        SingleResponseDto response = new SingleResponseDto(memberService.getCartProducts(jwtTokenizer.getMemberId(token), pageRequest));
         return new ResponseEntity(response, HttpStatus.OK);
     }
 }

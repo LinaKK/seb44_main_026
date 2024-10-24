@@ -5,6 +5,7 @@ import greenNare.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 @Entity
@@ -13,7 +14,9 @@ import java.util.List;
 @Getter
 @Setter
 //@Builder
-public class Review extends Auditable {
+public class Review extends Auditable implements Serializable {
+    private static final long serialVeresionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int reviewId;

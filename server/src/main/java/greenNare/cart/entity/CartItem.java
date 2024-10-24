@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -13,9 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 public class CartItem {
     private int productId;
-    @CreatedDate
-    private LocalDateTime CreatedAt;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
     public CartItem (int productId){
         this.productId = productId;
     }

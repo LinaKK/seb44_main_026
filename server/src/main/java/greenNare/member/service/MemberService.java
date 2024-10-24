@@ -15,6 +15,8 @@ import greenNare.product.entity.Product;
 import greenNare.product.repository.ImageRepository;
 import greenNare.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,26 +35,15 @@ import java.util.stream.Collectors;
 public class MemberService {
     private MemberRepository memberRepository;
     private SecurityConfiguration securityConfiguration;
-
-//    private CartService cartService;
-//
-//    private ImageRepository imageRepository;
-//
     private ProductService productService;
 
 
     public MemberService(MemberRepository memberRepository,
                          SecurityConfiguration securityConfiguration,
-                         ProductService productService/*,
-                         CartService cartService,
-                         ImageRepository imageRepository*/) {
+                         ProductService productService) {
         this.memberRepository = memberRepository;
         this.securityConfiguration = securityConfiguration;
         this.productService = productService;
-//        this.cartService = cartService;
-//        this.productService = productService;
-//        this.imageRepository = imageRepository;
-
     }
     public Member loginMember(String email, String password) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
@@ -144,12 +135,19 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+
+
+    //사용자 카트에 상품 추가
+    @CacheEvict(value = "cartProductsId", key = "#memberId")
     public void addMyCart(int memberId, int productId) {
         CartItem item = new CartItem(productId);
         Member member = findMemberById(memberId);
         member.getCartItemList().add(item);
     }
 
+
+
+    //사용자 카트에 담긴 상품 아이디 리스트 반환
     public List<Integer> getCartProductsId(int memberId) {
         Member member = findMemberById(memberId);
         log.info("member :" + member);
@@ -163,59 +161,31 @@ public class MemberService {
         return cartProductsId;
     }
 
-    public List<GetProductWithImageDto> getCartProducts(List<Integer> productIds, Pageable pageRequest) {
+
+
+    //사용자 카트에 담긴 상품 객체 리스트 반환
+    @Cacheable(value = "cartProducts", key = "#memberId")
+    public List<GetProductWithImageDto> getCartProducts(int memberId, Pageable pageRequest) {
+
+        List<Integer> productIds = getCartProductsId(memberId);
+
         Page<Product> products = productService.getProducts(pageRequest, productIds);
 
         return productService.getProductsWithImage(products, true);
 
-//        return productService.getProducts(productIds, pageRequest);
     }
 
 
 
-//    public Page<Product> getLikeProduts(int memberId, PageRequest pageable) {
-//        Page<Product> likeProducts = cartService.findMyLikeProducts(memberId,pageable);//cartService.findMyLikeProducts(memberId, pageable);
+
+//    //사용자 카트에 담긴 상품 객체 리스트 반환
+//    public List<GetProductWithImageDto> getCartProducts(List<Integer> productIds, Pageable pageRequest) {
+//        Page<Product> products = productService.getProducts(pageRequest, productIds);
 //
-//        return likeProducts;
+//        return productService.getProductsWithImage(products, true);
+//
+////        return productService.getProducts(productIds, pageRequest);
 //    }
-//
-//    public List<GetProductWithImageDto> getLikeProductsWithImage(Page<Product> cartProducts) {
-////        List<Product> myLikeProducts = cartProducts.getContent()
-////                .stream()
-////                .map( likeProduct -> {
-////                            Product productDetail = productService.getProduct(likeProduct.getProduct().getProductId());
-////                            return productDetail;
-////
-////                        }
-////
-////                ).collect(Collectors.toList());
-//
-//        List<GetProductWithImageDto> getProductWithImageDtos = cartProducts.stream()
-//                .map(product -> {
-//                    List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
-//                    List<String> imageLinks = images.stream()
-//                            .map(image -> image.getImageUri())
-//                            .collect(Collectors.toList());
-////                    Image image = imageRepository.findImageUriByProductProductId(product.getProductId());
-////                    String imageLink = image.getImageUri();
-//
-//                    GetProductWithImageDto resultDto = new GetProductWithImageDto(
-//                            product.getProductId(),
-//                            product.getProductName(),
-//                            product.getPrice(),
-//                            product.getCategory(),
-//                            product.getPoint(),
-//                            imageLinks
-////                            imageLink
-//                    );
-//
-//                    return resultDto;
-//                })
-//                .collect(Collectors.toList());
-//
-//
-//        return getProductWithImageDtos;
-//
-//    }
+
 }
 

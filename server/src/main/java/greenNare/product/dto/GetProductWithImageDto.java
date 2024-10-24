@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetProductWithImageDto {
+public class GetProductWithImageDto implements Serializable {
+    private static final long serialVeresionUID = 1L;
+
     private int productId;
     private String productName;
 

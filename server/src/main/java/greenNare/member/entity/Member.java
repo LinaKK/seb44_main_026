@@ -6,6 +6,7 @@ import greenNare.challenge.entity.Challenge;
 import greenNare.reply.entity.Reply;
 import lombok.*;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Member {
+public class Member implements Serializable {
+    private static final long serialVeresionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int memberId;
