@@ -14,6 +14,8 @@ import greenNare.product.repository.ImageRepository;
 import greenNare.product.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -68,6 +70,7 @@ public class ReviewService {
     }
 
 
+    @Cacheable(value = "reviews", key = "#productId + '_' + #pageable.getPageNumber() + '_' + #pageable.getPageSize()")
     public Page<Review> getReviews(int productId, PageRequest pageable) {
         //PageRequest pageable = PageRequest.of(page,size);
         Page<Review> reviews = reviewRepository.findByProductProductId(pageable, productId);
@@ -117,8 +120,8 @@ public class ReviewService {
 
 
 //    create결과 리턴?
+    @CacheEvict(value = "reviews", key = "#productId")
     public void createReview(Review review, int memberId, int productId) {
-        //
         verifyExistsReview(memberId, productId);
 
         review.setMember(memberRepository.findBymemberId(memberId));
@@ -133,6 +136,7 @@ public class ReviewService {
     }
 
 
+    @CacheEvict(value = "reviews", key = "#productId")
     public void updateReview(Review review, List<String> deleteImages, int memberId, int productId) {
         //
         Review findReview = findReview(memberId, productId);
@@ -153,6 +157,7 @@ public class ReviewService {
     }
 
 
+    @CacheEvict(value = "reviews", key = "#productId")
     public void createReviewWithImage(Review review, List<MultipartFile> images, int memberId, int productId) {
         //
         verifyExistsReview(memberId, productId);
@@ -181,6 +186,7 @@ public class ReviewService {
     }
 
 
+    @CacheEvict(value = "reviews", key = "#productId")
     public void updateReviewWithImage(Review review, List<String> deleteImages, List<MultipartFile> images, int memberId, int productId) {
         //
         Review findReview = findReview(memberId, productId);
@@ -247,6 +253,7 @@ public class ReviewService {
     }
 
 
+    @CacheEvict(value = "reviews", key = "#productId")
     public void deleteReview(int memberId, int productId) {
         Review findReview = findReview(memberId, productId);
 

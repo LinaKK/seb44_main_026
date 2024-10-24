@@ -122,6 +122,7 @@ public class ProductService {
 
 
     //DB에서 특정상품 상세정보 조회하여 반환
+    @Cacheable(value = "productDetails", key = "#productId")
     public Product getProduct(int productId) {
         Product productDetails = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.PRODUCT_NOT_FOUND));
@@ -209,6 +210,7 @@ public class ProductService {
 
 
     //DB에서 입력받는 상품에 해당하는 이미지링크 조회하여 반환
+    @Cacheable(value = "productImageLinks", key = "#product")
     public List<String> getImageLinks(Product product){
         List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
         List<String> imageLinks = images.stream()
