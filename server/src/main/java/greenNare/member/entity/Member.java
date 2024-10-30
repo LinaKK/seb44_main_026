@@ -1,6 +1,6 @@
 package greenNare.member.entity;
 
-import greenNare.cart.entity.Cart;
+//import greenNare.cart.entity.Cart;
 import greenNare.cart.entity.CartItem;
 import greenNare.challenge.entity.Challenge;
 import greenNare.reply.entity.Reply;
@@ -32,8 +32,8 @@ public class Member implements Serializable {
     @Column(nullable = false)
     private int point;
 
-    @OneToMany(mappedBy = "member")
-    private List<Cart> carts;
+//    @OneToMany(mappedBy = "member")
+//    private List<Cart> carts;
 
     @OneToMany(mappedBy = "member")
     private List<Challenge>  challenges;

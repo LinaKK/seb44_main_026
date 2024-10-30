@@ -1,9 +1,9 @@
 package greenNare.member.service;
 
-import greenNare.cart.entity.Cart;
+//import greenNare.cart.entity.Cart;
 import greenNare.cart.entity.CartItem;
-import greenNare.cart.repository.CartRepository;
-import greenNare.cart.service.CartService;
+//import greenNare.cart.repository.CartRepository;
+//import greenNare.cart.service.CartService;
 import greenNare.config.SecurityConfiguration;
 import greenNare.exception.BusinessLogicException;
 import greenNare.exception.ExceptionCode;
