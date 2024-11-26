@@ -1,9 +1,9 @@
 package greenNare.member.service;
 
-import greenNare.cart.entity.Cart;
+//import greenNare.cart.entity.Cart;
 import greenNare.cart.entity.CartItem;
-import greenNare.cart.repository.CartRepository;
-import greenNare.cart.service.CartService;
+//import greenNare.cart.repository.CartRepository;
+//import greenNare.cart.service.CartService;
 import greenNare.config.SecurityConfiguration;
 import greenNare.exception.BusinessLogicException;
 import greenNare.exception.ExceptionCode;
@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageReader;
@@ -34,31 +35,31 @@ import java.util.stream.Collectors;
 @Service
 public class MemberService {
     private MemberRepository memberRepository;
-    private SecurityConfiguration securityConfiguration;
+    //private SecurityConfiguration securityConfiguration;
     private ProductService productService;
 
 
     public MemberService(MemberRepository memberRepository,
-                         SecurityConfiguration securityConfiguration,
+                        // SecurityConfiguration securityConfiguration,
                          ProductService productService) {
         this.memberRepository = memberRepository;
-        this.securityConfiguration = securityConfiguration;
+        //this.securityConfiguration = securityConfiguration;
         this.productService = productService;
     }
-    public Member loginMember(String email, String password) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        Member member = optionalMember.orElse(null);
-
-        if (member != null && securityConfiguration.passwordEncoder().matches(password, member.getPassword())) {
-            return member;
-        }
-
-        return null;
-    }
+//    public Member loginMember(String email, String password) {
+//        Optional<Member> optionalMember = memberRepository.findByEmail(email);
+//        Member member = optionalMember.orElse(null);
+//
+//        if (member != null && securityConfiguration.passwordEncoder().matches(password, member.getPassword())) {
+//            return member;
+//        }
+//
+//        return null;
+//    }
 
     public Member createMember(Member member) {
-        member.setPassword(securityConfiguration.passwordEncoder().encode(member.getPassword()));
-
+        //member.setPassword(securityConfiguration.passwordEncoder().encode(member.getPassword()));
+        member.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(member.getPassword()));
         verifyExistsEmail(member.getEmail());
 
         return memberRepository.save(member);

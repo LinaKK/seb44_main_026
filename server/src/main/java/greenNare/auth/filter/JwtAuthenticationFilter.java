@@ -3,10 +3,12 @@ package greenNare.auth.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import greenNare.auth.dto.LoginDto;
 import greenNare.auth.jwt.JwtTokenizer;
+import greenNare.cache.CacheService;
 import greenNare.member.dto.MemberDto;
 import greenNare.member.entity.Member;
 import lombok.SneakyThrows;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,9 +29,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenizer jwtTokenizer) {
+    private final CacheService cacheService;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenizer jwtTokenizer, CacheService cacheService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenizer = jwtTokenizer;
+        this.cacheService = cacheService;
     }
 
     @SneakyThrows
@@ -88,7 +93,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
         String refreshToken = jwtTokenizer.generateRefreshToken(subject, expiration, base64EncodedSecretKey);
+        cacheService.putCache("RefreshToken", subject ,refreshToken);
 
         return refreshToken;
     }
+
+
 }
