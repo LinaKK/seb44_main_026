@@ -1,11 +1,15 @@
 package greenNare.config;
 
 import greenNare.auth.filter.JwtAuthenticationFilter;
+import greenNare.auth.filter.JwtRefreshFilter;
 import greenNare.auth.filter.JwtVerificationFilter;
 import greenNare.auth.handler.MemberAuthenticationFailureHandler;
 import greenNare.auth.handler.MemberAuthenticationSuccessHandler;
 import greenNare.auth.jwt.JwtTokenizer;
 import greenNare.auth.utils.CustomAuthorityUtils;
+import greenNare.cache.CacheService;
+import greenNare.member.service.MemberService;
+import org.hibernate.Cache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,9 +36,15 @@ public class SecurityConfiguration {
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
 
-    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils) {
+    private final CacheService cacheService;
+
+    private final MemberService memberService;
+
+    public SecurityConfiguration(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, CacheService cacheService, MemberService memberService) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
+        this.cacheService = cacheService;
+        this.memberService = memberService;
 
     }
 
@@ -92,7 +103,7 @@ public class SecurityConfiguration {
         public void configure(HttpSecurity builder) throws Exception {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager,jwtTokenizer);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager,jwtTokenizer, cacheService);
 
             jwtAuthenticationFilter.setFilterProcessesUrl("/user/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler());
@@ -100,12 +111,17 @@ public class SecurityConfiguration {
 
             JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
 
+            JwtRefreshFilter jwtRefreshFilter = new JwtRefreshFilter(jwtTokenizer, memberService, cacheService);
+
             builder
                     .addFilter(jwtAuthenticationFilter)
-                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class);
+                    .addFilterAfter(jwtRefreshFilter, JwtAuthenticationFilter.class)
+                    .addFilterAfter(jwtVerificationFilter, JwtRefreshFilter.class);
 
         }
     }
+
+
 }
 
 
