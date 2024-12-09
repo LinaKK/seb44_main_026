@@ -35,6 +35,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Debug credentials_json
+      run: echo ${{ secrets.GCP_SA_KEY }} | jq
+
     - name: Authenticate to Google Cloud
       id: auth
       uses: google-github-actions/auth@v1
@@ -43,10 +46,7 @@ jobs:
 
     - name: Configure Docker to use gcloud as a credential helper
       run: |
-        gcloud auth configure-docker
-
-    - name: Debug credentials_json
-      run: echo ${{ secrets.GCP_SA_KEY }} | jq 
+        gcloud auth configure-docker 
 
     - name: Build Docker image
       run: |
