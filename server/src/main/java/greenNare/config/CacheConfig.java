@@ -19,7 +19,7 @@ public class CacheConfig {
                 .entryTtl(Duration.ofMinutes(10));
 
         RedisCacheConfiguration productsConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(null);
+                .entryTtl(Duration.ofDays(7));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .withCacheConfiguration("products", productsConfig)
