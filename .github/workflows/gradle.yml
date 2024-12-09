@@ -28,6 +28,14 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
+    - name: Build the project with Gradle
+      run: ./gradlew build --no-daemon
+
+    - name: List build directory (for debugging)
+      run: |
+        echo "Listing build/libs folder to check for the generated JAR files"
+        ls -la build/libs
+
   docker-push:
     needs: build
     runs-on: ubuntu-latest
