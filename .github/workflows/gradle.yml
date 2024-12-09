@@ -35,9 +35,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Debug secrets
-      run: echo "${{ secrets.GCP_SA_KEY }}"
-
     - name: Authenticate to Google Cloud
       id: auth
       uses: google-github-actions/auth@v1
@@ -50,7 +47,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t gcr.io/greennare-image:latest .
+        docker build -f server/Dockerfile -t gcr.io/greennare-image:latest .
 
     - name: Push Docker image to GCP
       run: |
