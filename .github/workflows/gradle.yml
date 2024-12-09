@@ -56,7 +56,7 @@ jobs:
     - name: Build Docker image
       run: |
         cp build/libs/greenNare-0.0.1-SNAPSHOT.jar ./app.jar
-        docker build -t gcr.io/greennare-image:latest .
+        docker build -t us-central1-docker.pkg.dev/greennare-438213/cloud-run-source-deploy/greennare-image:latest .
 
     - name: Push Docker image to GCP
       run: |
