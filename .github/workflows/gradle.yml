@@ -36,15 +36,12 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build the project with Gradle
-      run: ./gradlew build --no-daemon
+      run: ./gradlew build --no-daemon --info --stacktrace
 
     - name: List build directory (for debugging)
       run: |
         echo "Listing build/libs folder to check for the generated JAR files"
         ls -la build/libs
-        
-    - name: Run Gradle tests
-      run: ./gradlew test --info --stacktrace
 
 
   docker-push:
