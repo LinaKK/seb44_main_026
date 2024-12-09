@@ -73,7 +73,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -f server/Dockerfile -t gcr.io/greennare-image:latest .
+        docker build -t gcr.io/greennare-image:latest .
 
     - name: Push Docker image to GCP
       run: |
