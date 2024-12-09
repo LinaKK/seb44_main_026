@@ -42,6 +42,10 @@ jobs:
       run: |
         echo "Listing build/libs folder to check for the generated JAR files"
         ls -la build/libs
+        
+    - name: Run Gradle tests
+      run: ./gradlew test --info --stacktrace
+
 
   docker-push:
     needs: build
