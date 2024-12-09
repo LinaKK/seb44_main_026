@@ -45,6 +45,9 @@ jobs:
       run: |
         gcloud auth configure-docker
 
+    - name: Debug credentials_json
+      run: echo ${{ secrets.GCP_SA_KEY }} | jq 
+
     - name: Build Docker image
       run: |
         docker build -t gcr.io/greennare-image:latest .
