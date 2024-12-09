@@ -43,6 +43,12 @@ jobs:
         echo "Listing build/libs folder to check for the generated JAR files"
         ls -la build/libs
 
+    - name: Upload test reports as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: server/build/reports/tests/test/index.html
+
 
   docker-push:
     needs: build
