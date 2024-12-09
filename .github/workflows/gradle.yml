@@ -36,7 +36,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Debug credentials_json
-      run: echo ${{ secrets.GCP_SA_KEY }} | jq
+      run: echo ${{ secrets.GCP_SA_KEY }} | jq .
 
     - name: Authenticate to Google Cloud
       id: auth
