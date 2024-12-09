@@ -28,6 +28,9 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
+    - name: Grant execute permission to gradlew
+      run: chmod +x ./server/gradlew
+
     - name: Build the project with Gradle
       run: ./server/gradlew build --no-daemon
 
