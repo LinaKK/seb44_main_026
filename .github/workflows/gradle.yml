@@ -20,6 +20,10 @@ jobs:
     permissions:
       contents: read
 
+    defaults:
+      run:
+        working-directory: ./server
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 11
@@ -29,15 +33,15 @@ jobs:
         distribution: 'temurin'
 
     - name: Grant execute permission to gradlew
-      run: chmod +x ./server/gradlew
+      run: chmod +x ./gradlew
 
     - name: Build the project with Gradle
-      run: ./server/gradlew build --no-daemon
+      run: ./gradlew build --no-daemon
 
     - name: List build directory (for debugging)
       run: |
         echo "Listing build/libs folder to check for the generated JAR files"
-        ls -la server/build/libs
+        ls -la build/libs
 
   docker-push:
     needs: build
