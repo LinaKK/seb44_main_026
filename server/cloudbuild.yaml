@@ -1,3 +1,5 @@
+options:
+  logging: NONE
 steps:
   - id: 'deploy-workflow'
     name: 'gcr.io/cloud-builders/gcloud'
