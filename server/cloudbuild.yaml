@@ -1,7 +1,4 @@
 steps:
   - id: 'deploy-workflow'
     name: 'gcr.io/cloud-builders/gcloud'
-    args: ['run', 'deploy', 'greennare-service', '--image', 'gcr.io/$PROJECT_ID/my-image', '--region', 'us-central1']
-
-images:
-  - 'gcr.io/$PROJECT_ID/my-image'
+    args: ['run', 'deploy', 'greennare-service', '--image', 'us-central1-docker.pkg.dev/greennare-438213/cloud-run-source-deploy/greennare-image:latest', '--region', 'us-central1']
