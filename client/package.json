@@ -69,6 +69,8 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8"
   },
+
   "homepage": "https://linakk.github.io/seb44_main_026/",
-  "proxy": "http://localhost:8080/"
+  "proxy": "https://greennare-service-826313586778.us-central1.run.app"
+
 }
