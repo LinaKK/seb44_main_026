@@ -44,8 +44,8 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                    HttpServletResponse response,
                                    FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(request.getRequestURI());
-        if(request.getRequestURI().startsWith("/auth/refresh/**")){
+
+        if(request.getRequestURI().startsWith("/user/refresh")){
 
             //String refreshToken = request.getParameter("RefreshToken");
             String refreshToken = request.getHeader("RefreshToken");
@@ -70,6 +70,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
             }
 
         }
+        filterChain.doFilter(request, response);
 
     }
 
@@ -82,7 +83,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
             Claims cachedClaims = jwtTokenizer.getClaims(cachedRefreshToken, jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey())).getBody();
 
             //캐시에 저장된 토큰과 비교
-            if(claims.equals(cachedClaims)) {
+            if(!claims.equals(cachedClaims)) {
                 System.out.println("claims != cached");
                 System.out.println("claims: " + claims);
                 System.out.println("cached: " + cachedClaims);
