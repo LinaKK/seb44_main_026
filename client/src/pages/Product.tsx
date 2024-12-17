@@ -34,7 +34,7 @@ export const Product = () => {
   const getProduct = async () => {
     try {
       const res = await API.GET({
-        url: `${process.env.REACT_APP_SERVER_URL}/green?page=${
+        url: `${process.env.REACT_APP_SERVER_URL}green?page=${
           currentPage - 1
         }&size=${9}&category=${filter}`,
       });
