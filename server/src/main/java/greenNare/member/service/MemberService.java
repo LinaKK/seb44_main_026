@@ -69,7 +69,6 @@ public class MemberService {
 
         Member findMember = findVerifiedMember(member.getMemberId());
 
-
         Optional.ofNullable(member.getName())
                 .ifPresent(name -> findMember.setName(name));
 
