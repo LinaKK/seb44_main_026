@@ -27,7 +27,7 @@ public class Member implements Serializable {
     @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = true)
     private String password;
     @Column(nullable = false)
     private int point;

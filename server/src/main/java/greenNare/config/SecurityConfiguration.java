@@ -5,6 +5,7 @@ import greenNare.auth.filter.JwtRefreshFilter;
 import greenNare.auth.filter.JwtVerificationFilter;
 import greenNare.auth.handler.MemberAuthenticationFailureHandler;
 import greenNare.auth.handler.MemberAuthenticationSuccessHandler;
+import greenNare.auth.handler.OAuth2MemberSuccessHandler;
 import greenNare.auth.jwt.JwtTokenizer;
 import greenNare.auth.utils.CustomAuthorityUtils;
 import greenNare.cache.CacheService;
@@ -19,6 +20,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -70,6 +72,8 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.PATCH, "/*/").hasRole("USER")
                         .antMatchers(HttpMethod.GET, "/*/").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2.successHandler(new OAuth2MemberSuccessHandler(jwtTokenizer,  authorityUtils, memberService, cacheService))
                 );
 
         return http.build();
@@ -114,12 +118,13 @@ public class SecurityConfiguration {
             JwtRefreshFilter jwtRefreshFilter = new JwtRefreshFilter(jwtTokenizer, memberService, cacheService);
 
             builder
-                    .addFilter(jwtAuthenticationFilter)
+                    .addFilterAfter(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
                     .addFilterAfter(jwtRefreshFilter, JwtAuthenticationFilter.class)
                     .addFilterAfter(jwtVerificationFilter, JwtRefreshFilter.class);
 
         }
     }
+
 
 
 }

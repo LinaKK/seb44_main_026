@@ -1,9 +1,22 @@
 externalImagePath: home/ssm-user/seb44_main_026/images/
 spring:
+  log-request-details: true
   #mvc:
   #  static-path-pattern: /images/**
   #resources:
   #  static-locations: file:${externalImagePath}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
   cache:
     type: redis
 
@@ -77,10 +90,19 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org:
-      springframework:
-        jdbc:
-          core: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+
+#    org:
+#      springframework: DEBUG
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+#    org:
+#      springframework:
+#        jdbc:
+#          core: TRACE
 
 jwt:
   key: jasdfasfd1312345351354314560984745
