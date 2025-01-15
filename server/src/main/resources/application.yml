@@ -13,24 +13,24 @@ spring:
           google:
             clientId: ${GOOGLE_CLIENT_ID}
             clientSecret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "https://linakk.github.io"
-            scope:
-              - email
-              - profile
+            redirect-uri: "https://greennare-service-826313586778.us-central1.run.app/login/oauth2/code/google"
+            scope: email, profile
+#              - email
+#              - profile
 
   cache:
     type: redis
 
   redis:
 #    cache:
-    host: 35.203.189.90
+    host: 34.45.8.145
     port: 6379
 
   datasource:
-    url: jdbc:mysql://35.203.189.90:3306/greennare?serverTimezone=Asia/Seoul
-    username: user-greennare
-    password: Manager1
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://34.173.185.16:3306/greennare?serverTimezone=Asia/Seoul
+    username: greennare-user
+    password: GreennareUser1
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
