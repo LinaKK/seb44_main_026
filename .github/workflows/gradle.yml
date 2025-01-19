@@ -37,7 +37,7 @@ jobs:
 
     - name: Build the project with Gradle
       env:
-        GOOGLE_CLIENT_ID: ${{ GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       run: ./gradlew build --no-daemon --info --stacktrace
 
     - name: List build directory (for debugging)
