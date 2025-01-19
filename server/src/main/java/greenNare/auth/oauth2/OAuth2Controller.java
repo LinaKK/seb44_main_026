@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @RestController
@@ -25,9 +26,17 @@ public class OAuth2Controller {
     @Value("${spring.security.oauth2.client.registration.google.scope}")
     private List<String> scope;
 
-    private String scopeString = String.join(" ", scope);
+    private String scopeString;
+
+    @PostConstruct
+    public void init(){
+        scopeString = String.join("%20", scope);
+        System.out.println(scopeString);
+    }
+
 
     private final String endPoint = "https://accounts.google.com/o/oauth2/auth";
+
 
     @GetMapping("/google")
     public ResponseEntity getGoogleOAuth2EndPoint(){
@@ -35,7 +44,7 @@ public class OAuth2Controller {
                 "?client_id=" + clientId +
                 "&redirect_uri=" + redirectUri +
                 "&response_type=code" +
-                "&scope=" + scopeString +
+                "&scope=" + scope +
                 "&access_type=offline";
 
         SingleResponseDto responseDto = new SingleResponseDto(authUrl);
