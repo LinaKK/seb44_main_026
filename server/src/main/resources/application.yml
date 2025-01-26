@@ -1,7 +1,4 @@
 externalImagePath: home/ssm-user/seb44_main_026/images/
-server:
-  port: 8080
-
 spring:
   log-request-details: true
   #mvc:

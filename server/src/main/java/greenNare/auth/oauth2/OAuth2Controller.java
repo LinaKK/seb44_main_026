@@ -40,12 +40,12 @@ public class OAuth2Controller {
 
     @GetMapping("/google")
     public ResponseEntity getGoogleOAuth2EndPoint(){
-        String authUrl = endPoint +
-                "?client_id=" + clientId +
-                "&redirect_uri=" + redirectUri +
-                "&response_type=code" +
-                "&scope=" + scope +
-                "&access_type=offline";
+        String authUrl = endPoint; //+
+//                "?client_id=" + clientId +
+//                "&redirect_uri=" + redirectUri +
+//                "&response_type=code" +
+//                "&scope=" + scope +
+//                "&access_type=offline";
 
         SingleResponseDto responseDto = new SingleResponseDto(authUrl);
 
