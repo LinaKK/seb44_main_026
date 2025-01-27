@@ -13,7 +13,7 @@ spring:
           google:
             clientId: ${GOOGLE_CLIENT_ID}
             clientSecret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "https://greennare-service-457336470984.us-central1.run.app/login/oauth2/code/google"
+            redirect-uri: "https://greennare-image-457336470984.us-central1.run.app/login/oauth2/code/google"
             scope: email, profile
 #              - email
 #              - profile
