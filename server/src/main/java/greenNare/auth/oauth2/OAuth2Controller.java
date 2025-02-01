@@ -44,7 +44,7 @@ public class OAuth2Controller {
                 "?client_id=" + clientId +
                 "&redirect_uri=" + redirectUri +
                 "&response_type=code" +
-                "&scope=" + scope +
+                "&scope=" + scopeString +
                 "&access_type=offline";
 
         SingleResponseDto responseDto = new SingleResponseDto(authUrl);
