@@ -47,6 +47,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
             Member newMember = new Member();
             newMember.setEmail(email);
             newMember.setName(name);
+            newMember.setPassword(UUID.randomUUID().toString()+"!");
             newMember.setPoint(0);
             memberService.createMember(newMember);
         }
@@ -58,7 +59,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         response.setHeader("Authorization", "Bearer " + accessToken);
         response.setHeader("Refresh", refreshToken);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_OK);
 
         return;
     }
