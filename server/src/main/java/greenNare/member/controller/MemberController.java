@@ -104,6 +104,17 @@ import java.util.Optional;
         SingleResponseDto response = new SingleResponseDto(memberService.getCartProducts(jwtTokenizer.getMemberId(token), pageRequest));
         return new ResponseEntity(response, HttpStatus.OK);
     }
+
+    @GetMapping("find")
+    public ResponseEntity getMemberInfo(@RequestHeader(value = "AUthorization", required = true) String token) {
+
+        Member member = memberService.findMemberById(jwtTokenizer.getMemberId(token));
+
+        MemberDto.Response response = new MemberDto.Response(member.getMemberId(), member.getEmail(), member.getName(), member.getPoint());
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
 }
 
 
