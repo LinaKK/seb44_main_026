@@ -85,9 +85,10 @@ import java.util.Optional;
     @Transactional
     @PostMapping("addCart")
     public ResponseEntity addCartItem(@RequestHeader(value = "Authorization", required = false) String token,
-                                        @RequestBody MemberDto.PostCart postCart) {
+                                        @RequestParam int productId
+                                        /*@RequestBody MemberDto.PostCart postCart*/) {
 
-        memberService.addMyCart(jwtTokenizer.getMemberId(token), postCart.getProductId());
+        memberService.addMyCart(jwtTokenizer.getMemberId(token), productId);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
