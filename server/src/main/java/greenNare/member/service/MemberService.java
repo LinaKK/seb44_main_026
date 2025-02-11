@@ -165,14 +165,20 @@ public class MemberService {
 
     //사용자 카트에 담긴 상품 객체 리스트 반환
     @Cacheable(value = "cartProducts", key = "#memberId")
-    public List<GetProductWithImageDto> getCartProducts(int memberId, Pageable pageRequest) {
+    public Page<Product> getCartProducts(int memberId, Pageable pageRequest) {
 
         List<Integer> productIds = getCartProductsId(memberId);
 
         Page<Product> products = productService.getProducts(pageRequest, productIds);
 
-        return productService.getProductsWithImage(products, true);
+        return products;
 
+        //return productService.getProductsWithImage(products, true);
+
+    }
+
+    public List<GetProductWithImageDto> getCartProductWithImageDtos(Page<Product> products) {
+        return productService.getProductsWithImage(products, true);
     }
 
 

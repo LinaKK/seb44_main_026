@@ -1,5 +1,6 @@
 package greenNare.member.controller;
 
+import greenNare.Response.MultiResponseDto;
 import greenNare.auth.jwt.JwtTokenizer;
 
 
@@ -10,6 +11,10 @@ import greenNare.member.mapper.MemberMapper;
 import greenNare.member.dto.MemberDto;
 import greenNare.member.service.MemberService;
 
+import greenNare.product.dto.GetProductWithImageDto;
+import greenNare.product.entity.Product;
+import greenNare.product.entity.Review;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -101,8 +106,11 @@ import java.util.Optional;
 
         Pageable pageRequest = PageRequest.of(page, size);
 
+        Page<Product> productPage = memberService.getCartProducts(jwtTokenizer.getMemberId(token), pageRequest);
+        List<GetProductWithImageDto> products = memberService.getCartProductWithImageDtos(productPage);
+
         //List<Integer> productIds = memberService.getCartProductsId(jwtTokenizer.getMemberId(token));
-        SingleResponseDto response = new SingleResponseDto(memberService.getCartProducts(jwtTokenizer.getMemberId(token), pageRequest));
+        MultiResponseDto response = new MultiResponseDto(products, productPage);
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
