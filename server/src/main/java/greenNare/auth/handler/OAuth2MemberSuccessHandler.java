@@ -6,6 +6,7 @@ import greenNare.cache.CacheService;
 import greenNare.member.entity.Member;
 import greenNare.member.service.MemberService;
 import org.springframework.cache.Cache;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -57,9 +58,21 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String accessToken = delegateAccessToken(member);
         String refreshToken = delegateRefreshToken(member);
 
-        response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setHeader("Refresh", refreshToken);
-        response.setStatus(HttpServletResponse.SC_OK);
+        ResponseCookie jwtCookie = ResponseCookie.from("Authorization", accessToken)
+                .httpOnly(false)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .build();
+
+        ResponseCookie refreshCookie = ResponseCookie.from("Refresh", refreshToken)
+                .httpOnly(false)
+                .secure(true)
+                .path("/")
+                .sameSite("Lax")
+                .build();
+
+        response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin");
 
         return;
     }
