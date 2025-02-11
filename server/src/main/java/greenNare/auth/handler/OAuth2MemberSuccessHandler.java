@@ -72,6 +72,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 .sameSite("Lax")
                 .build();
 
+        response.addCookie(jwtCookie);
+        response.addCookie(refreshCookie);
+
         response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin");
 
         return;
