@@ -41,8 +41,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
 
         //가입된 회원인지 확인
+
         try {
-            memberService.findMemberByEmail(email);
+            Member member = memberService.findMemberByEmail(email);
         } catch (Exception e){
             //가입안된 이메일이면 DB 저장
             String name = String.valueOf(oAuth2User.getAttributes().get("name"));
