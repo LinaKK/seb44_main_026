@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -58,19 +59,17 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String accessToken = delegateAccessToken(member);
         String refreshToken = delegateRefreshToken(member);
 
-        ResponseCookie jwtCookie = ResponseCookie.from("Authorization", accessToken)
-                .httpOnly(false)
-                .secure(true)
-                .path("/")
-                .sameSite("Lax")
-                .build();
+        Cookie jwtCookie = new Cookie("Authorization", accessToken);
+        jwtCookie.setHttpOnly(false);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(60 * 60 * 24);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("Refresh", refreshToken)
-                .httpOnly(false)
-                .secure(true)
-                .path("/")
-                .sameSite("Lax")
-                .build();
+        Cookie refreshCookie = new Cookie("Refresh", refreshToken);
+        jwtCookie.setHttpOnly(false);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(60 * 60 * 24);
 
         response.addCookie(jwtCookie);
         response.addCookie(refreshCookie);
