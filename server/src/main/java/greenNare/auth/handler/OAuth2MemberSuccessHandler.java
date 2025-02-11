@@ -16,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 
 public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -60,21 +61,26 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String accessToken = delegateAccessToken(member);
         String refreshToken = delegateRefreshToken(member);
 
-        Cookie jwtCookie = new Cookie("Authorization", accessToken);
-        jwtCookie.setHttpOnly(false);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(60 * 60 * 24);
+        ResponseCookie jwtCookie = ResponseCookie.from("Authorization", accessToken)
+                .httpOnly(false)  // JavaScript에서 접근 불가
+                .secure(true)    // HTTPS에서만 전송 가능
+                .path("/")       // 모든 경로에서 사용 가능
+                .sameSite("None") // 크로스사이트 요청 허용
+                .maxAge(Duration.ofDays(1)) // 1일 유지
+                .build();
 
-        Cookie refreshCookie = new Cookie("Refresh", refreshToken);
-        jwtCookie.setHttpOnly(false);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(60 * 60 * 24);
+        ResponseCookie refreshCookie = ResponseCookie.from("Refresh", refreshToken)
+                .httpOnly(false)  // JavaScript에서 접근 불가
+                .secure(true)    // HTTPS에서만 전송 가능
+                .path("/")       // 모든 경로에서 사용 가능
+                .sameSite("None") // 크로스사이트 요청 허용
+                .maxAge(Duration.ofDays(1)) // 1일 유지
+                .build();
 
-        response.addCookie(jwtCookie);
-        response.addCookie(refreshCookie);
+        response.addHeader("Set-Cookie", jwtCookie.toString());
+        response.addHeader("Set-Cookie", refreshCookie.toString());
 
+        response.addHeader("Set-Cookie", jwtCookie.toString());
         response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin");
 
         return;
