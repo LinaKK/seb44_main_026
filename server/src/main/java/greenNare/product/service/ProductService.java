@@ -39,7 +39,7 @@ public class ProductService {
 
 
     //DB에서 카테고리별 상품 조회
-    @Cacheable(value = "produdcts", key = "#category+'_'+#page+'_'+#size")
+    @Cacheable(value = "products", key = "#category+'_'+#page+'_'+#size")
     public Page<Product> getProducts(int page, int size, String category) {
         PageRequest pageRequest = PageRequest.of(page, size);
         if(category.equals("all")) {
