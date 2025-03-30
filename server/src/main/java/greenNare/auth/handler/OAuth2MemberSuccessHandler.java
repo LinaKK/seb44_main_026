@@ -81,11 +81,10 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         response.addHeader("Set-Cookie", jwtCookie.toString());
         response.addHeader("Set-Cookie", refreshCookie.toString());
+        
+//        response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin");
 
-        response.addHeader("Set-Cookie", jwtCookie.toString());
-        response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin");
-
-//        response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin?token=" + accessToken+"&refresh="+ refreshToken);
+        response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin?token=" + accessToken+"&refresh="+ refreshToken);
 
         return;
     }
