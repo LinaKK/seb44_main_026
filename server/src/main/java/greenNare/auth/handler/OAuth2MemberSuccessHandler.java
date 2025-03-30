@@ -63,7 +63,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         ResponseCookie jwtCookie = ResponseCookie.from("Authorization", accessToken)
                 .httpOnly(false)  // JavaScript에서 접근 불가
-                .secure(true)    // HTTPS에서만 전송 가능
+                .secure(false)    // HTTPS에서만 전송 가능
                 .path("/")       // 모든 경로에서 사용 가능
                 .sameSite("None") // 크로스사이트 요청 허용
                 .maxAge(Duration.ofDays(1)) // 1일 유지
@@ -71,7 +71,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         ResponseCookie refreshCookie = ResponseCookie.from("Refresh", refreshToken)
                 .httpOnly(false)  // JavaScript에서 접근 불가
-                .secure(true)    // HTTPS에서만 전송 가능
+                .secure(false)    // HTTPS에서만 전송 가능
                 .path("/")       // 모든 경로에서 사용 가능
                 .sameSite("None") // 크로스사이트 요청 허용
                 .maxAge(Duration.ofDays(1)) // 1일 유지
