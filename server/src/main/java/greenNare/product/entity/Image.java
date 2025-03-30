@@ -23,7 +23,7 @@ public class Image extends Auditable {
     @JoinColumn(name = "reviewId")
     Review review;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")
     Product product;
 
