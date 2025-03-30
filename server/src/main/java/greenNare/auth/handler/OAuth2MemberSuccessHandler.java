@@ -65,7 +65,6 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 .httpOnly(false)  // JavaScript에서 접근 불가
                 .secure(true)    // HTTPS에서만 전송 가능
                 .path("/")       // 모든 경로에서 사용 가능
-                .domain("linakk.github.io")
                 .sameSite("None") // 크로스사이트 요청 허용
                 .maxAge(Duration.ofDays(1)) // 1일 유지
                 .build();
@@ -74,14 +73,13 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 .httpOnly(false)  // JavaScript에서 접근 불가
                 .secure(true)    // HTTPS에서만 전송 가능
                 .path("/")       // 모든 경로에서 사용 가능
-                .domain("linakk.github.io")
                 .sameSite("None") // 크로스사이트 요청 허용
                 .maxAge(Duration.ofDays(1)) // 1일 유지
                 .build();
 
         response.addHeader("Set-Cookie", jwtCookie.toString());
         response.addHeader("Set-Cookie", refreshCookie.toString());
-        
+
 //        response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin");
 
         response.sendRedirect("https://linakk.github.io/seb44_main_026/#/waitLogin?token=" + accessToken+"&refresh="+ refreshToken);
