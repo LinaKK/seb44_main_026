@@ -1,6 +1,7 @@
 package greenNare.product.service;
 
 
+import greenNare.cache.CacheService;
 import greenNare.exception.BusinessLogicException;
 import greenNare.exception.ExceptionCode;
 import greenNare.product.dto.GetProductWithImageDto;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,12 +30,17 @@ public class ProductService {
     private ProductRepository productRepository;
     private ImageRepository imageRepository;
 
+    private ImageService imageService;
+    private CacheService cacheService;
 
 
     public ProductService (ProductRepository productRepository,
-                           ImageRepository imageRepository) {
+                           ImageRepository imageRepository,
+                           CacheService cacheService,
+                           ImageService imageService) {
         this.productRepository = productRepository;
         this.imageRepository = imageRepository;
+        this.imageService = imageService;
     }
 
 
@@ -44,10 +51,12 @@ public class ProductService {
         PageRequest pageRequest = PageRequest.of(page, size);
         if(category.equals("all")) {
             Page<Product> products = productRepository.findAll(pageRequest);
+            System.out.println("find products from DB (all category)");
             return products;
         }
         else {
             Page<Product> products = productRepository.findByCategory(pageRequest, category);
+            System.out.println("find products from DB (" + category + ")");
             return products;
         }
     }
@@ -76,7 +85,7 @@ public class ProductService {
                             product.getCategory(),
                             product.getPoint(),
                             product.getStoreLink(),
-                            getImageLinks(product),
+                            imageService.getImageLinks(product), //여기서 db조회 발생
                             existCart
 
                     );
@@ -107,7 +116,7 @@ public class ProductService {
                             product.getCategory(),
                             product.getPoint(),
                             product.getStoreLink(),
-                            getImageLinks(product),
+                            imageService.getImageLinks(product),
                             existInMyCart(cartProductId, product.getProductId())
 
                     );
@@ -143,7 +152,7 @@ public class ProductService {
                 productDetails.getCategory(),
                 productDetails.getPoint(),
                 productDetails.getStoreLink(),
-                getImageLinks(productDetails),
+                imageService.getImageLinks(productDetails),
                 false
 
         );
@@ -210,15 +219,16 @@ public class ProductService {
 
 
     //DB에서 입력받는 상품에 해당하는 이미지링크 조회하여 반환
-    @Cacheable(value = "productImageLinks", key = "#product")
-    public List<String> getImageLinks(Product product){
-        List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
-        List<String> imageLinks = images.stream()
-                .map(image -> image.getImageUri())
-                .collect(Collectors.toList());
-
-        return imageLinks;
-    }
+//    @Cacheable(value = "productImageLinks", key = "imagelink")
+//    public List<String> getImageLinks(Product product){
+//        System.out.println("getImage");
+//        List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
+//        List<String> imageLinks = images.stream()
+//                .map(image -> image.getImageUri())
+//                .collect(Collectors.toList());
+//
+//        return imageLinks;
+//    }
 
 
     // MebmerService에서 사용자 cart상품 조회시 getCartProducts에서 사용했으나
