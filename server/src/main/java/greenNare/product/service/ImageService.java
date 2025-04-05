@@ -1,5 +1,6 @@
 package greenNare.product.service;
 
+import greenNare.product.dto.ProductImageDto;
 import greenNare.product.entity.Image;
 import greenNare.product.entity.Product;
 import greenNare.product.repository.ImageRepository;
@@ -18,10 +19,10 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-
     @Cacheable(value = "productImageLinks", key = "#product.productId")
     public List<String> getImageLinks(Product product){
-        System.out.println("getImage");
+        System.out.println("getImage form DB");
+
         List<Image> images = imageRepository.findImagesUriByProductProductId(product.getProductId());
         List<String> imageLinks = images.stream()
                 .map(image -> image.getImageUri())
@@ -29,5 +30,14 @@ public class ImageService {
 
         return imageLinks;
     }
+
+    @Cacheable(value = "productsImageLink", key = "#productIds")
+    public List<ProductImageDto> getImageLinks(List<Integer> productIds){
+        List<ProductImageDto> imageLinks = imageRepository.findByProductIds(productIds);
+
+        return imageLinks;
+    }
+
+
 
 }

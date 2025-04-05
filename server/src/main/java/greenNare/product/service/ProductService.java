@@ -5,6 +5,7 @@ import greenNare.cache.CacheService;
 import greenNare.exception.BusinessLogicException;
 import greenNare.exception.ExceptionCode;
 import greenNare.product.dto.GetProductWithImageDto;
+import greenNare.product.dto.ProductImageDto;
 import greenNare.product.entity.Image;
 import greenNare.product.entity.Product;
 import greenNare.product.repository.ImageRepository;
@@ -18,10 +19,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,10 +46,13 @@ public class ProductService {
     //DB에서 카테고리별 상품 조회
     @Cacheable(value = "products", key = "#category+'_'+#page+'_'+#size")
     public Page<Product> getProducts(int page, int size, String category) {
+
         PageRequest pageRequest = PageRequest.of(page, size);
         if(category.equals("all")) {
             Page<Product> products = productRepository.findAll(pageRequest);
-            System.out.println("find products from DB (all category)");
+            System.out.println("find products from DB (all category)"+"\n"+ products.getContent());
+            List<Integer> productIds = products.getContent().stream().map(Product :: getProductId).collect(Collectors.toList());
+
             return products;
         }
         else {
@@ -74,6 +75,10 @@ public class ProductService {
     //DB에서 상품, 상품별 이미지 조회하여 리스트로 반환(사용자 cart상품 리스트 매개변수로 받지 않음)
     public List<GetProductWithImageDto> getProductsWithImage(Page<Product> products, boolean existCart) {
 
+        List<Integer> productIds = products.getContent().stream().map(Product::getProductId).collect(Collectors.toList());
+        List<ProductImageDto> imageDtos = imageService.getImageLinks(productIds);
+        Map<Integer, List<ProductImageDto>> imageListMap = imageDtos.stream().collect(Collectors.groupingBy(ProductImageDto::getProductId));
+
         List<GetProductWithImageDto> getProductWithImageDtos = products.getContent().stream()
                 .map(product -> {
 
@@ -85,7 +90,10 @@ public class ProductService {
                             product.getCategory(),
                             product.getPoint(),
                             product.getStoreLink(),
-                            imageService.getImageLinks(product), //여기서 db조회 발생
+                            imageListMap.getOrDefault(product.getProductId(), new ArrayList<>()).stream()
+                                    .map(ProductImageDto::getImageUri)
+                                    .collect(Collectors.toList()),
+//                            imageService.getImageLinks(product),//여기서 db조회 발생
                             existCart
 
                     );
